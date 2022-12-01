@@ -10,9 +10,11 @@ Win by esacping distruction!
 
 # Mockup
 One player version
+
 ![mockup for game](mockup2.png)
 
 Two player version
+
 ![mockup for game](mockup.png)
 
 # Tech Being Used
