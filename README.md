@@ -6,7 +6,7 @@ The supernova is always growing but as you collect fuel packets, it propels you 
 
 Unfortunately, space is cluttered with astroids that damage your spaceship and effect your propulsion. 
 
-Win by esacping distruction!
+Win by escaping distruction!
 
 # Mockup
 One player version
