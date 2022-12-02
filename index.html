@@ -4,19 +4,26 @@
     <meta charset="utf-8" />
     <link href="style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+    <!-- astroid images from https://www.freeimages.com/photo/asteroid-7-1337597 -->
+    <!-- sun images used for fuel from  https://photojournal.jpl.nasa.gov/catalog/PIA21212-->
     <title>Escape the Supernova</title>
 </head>
 
     <body>
     <div id="gameboard">
         <div id = "left-top">
-            <button class="button" id="resetButton" style="button">Reset</button>
+            <button class="button" id="resetButton" type="button">Reset</button>
         </div>
         <div id="middle-top">
             <p id="user-message">User Message</p>
         </div>
-        <div id ="left-aside"></div>
-        <div id = "left-main"></div>
+        <div id ="left-aside">
+            <p id="player-one">Player 1</p>
+        </div>
+
+        <div id = "left-main">
+            <canvas id="canvas"></canvas>
+        </div>
     </div>
 
     <script src="script.js"></script>

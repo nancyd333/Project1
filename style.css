@@ -3,6 +3,10 @@ body{
     font-family: 'Handlee', cursive;
 }
 
+canvas{
+    border:1px solid black;
+}
+
 #gameboard{
     display: grid;
     min-height: 150vh;
@@ -54,4 +58,8 @@ body{
 }
 #resetButton{
     margin: 25px;
+}
+
+#player-one{
+    padding: 5px;
 }
