@@ -7,64 +7,65 @@ let leftMainWidth = leftMain.offsetWidth
 // clientWidth
 
 
-
 //set canvas to the height / width of the div that contains it
 //this sets it once and keeps it at that size
 //TODO once you start the game you can't resize!!!
-console.log(leftMainHeight)
-console.log(leftMainWidth)
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
+
+//check canvas width height
+console.log("heightOfCanvas",leftMainHeight)
+console.log("widthOfCanvas", leftMainWidth)
 
 // console.log(ctx)
 // console.log(leftMain.clientWidth)
 // console.log(leftMain.clientHeight)
 
-
-//create images
-const fuelImage = new Image()
-fuelImage.src = 'sun.jpeg'
-fuelImage.alt = 'sun'
-fuelImage.width= 35
-fuelImage.height=35
-console.log("checkfuelImage", fuelImage.src, fuelImage.width, fuelImage.height)
-
-const astroid1Image = new Image()
-astroid1Image.src = 'astroid1.jpg'
-astroid1Image.alt = 'astroid'
-astroid1Image.width = 35
-astroid1Image.height = 35
-console.log("checkastroid1Image", astroid1Image.src, astroid1Image.width, astroid1Image.height)
-
-const spaceshipImage = new Image()
-spaceshipImage.src = 'spaceship.png'
-spaceshipImage.width = 60
-spaceshipImage.height = 100
-spaceshipImage.alt = 'spaceship'
-console.log("checkspaceshipImage", spaceshipImage.src, spaceshipImage.width, spaceshipImage.height)
-
-//this draws the spaceship in a static spot
-spaceshipImage.onload = function(){
-    ctx.drawImage(spaceshipImage, 0,100,spaceshipImage.width,spaceshipImage.height)
-}
-
-console.log(fuelImage.y, canvas.height)
-
-fuelImage.onload = function(){
-    let a = 0
-    let b = 0
-    if (fuelImage.y < canvas.height){   
-            () => {
-            b++
-            console.log('hi')
-            ctx.drawImage(fuelImage, a,b,fuelImage.width,fuelImage.height)
-            }
-        }
-        
-
+// const spaceshipImage = new Image()
+    const spaceshipImage = document.createElement('img')
+    spaceshipImage.src = 'spaceship.png'
+    spaceshipImage.width = 60
+    spaceshipImage.height = 100
+    spaceshipImage.xcord = leftMainWidth/2
+    spaceshipImage.ycord = leftMainHeight-175
+    spaceshipImage.alt = 'spaceship'
     
+    //check the values are set
+    console.log("checkspaceshipImageCreateValues", "src", spaceshipImage.src, "img width",spaceshipImage.width, "img height", spaceshipImage.height, "img x", spaceshipImage.xcord, "img y", spaceshipImage.ycord)
+
+
+function loadSpaceship(){
+ 
+    //load spaceship in starting position
+    spaceshipImage.onload = function(){
+        
+        ctx.drawImage(spaceshipImage, spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width,spaceshipImage.height)
+        //check drawImage values
+        console.log("drawImgValues","x",spaceshipImage.xcord,"y",spaceshipImage.ycord,"width",spaceshipImage.width,"height",spaceshipImage.height)
+      
+        }
     }
 
+loadSpaceship()
+
+function navigateSpaceship(e){
+    
+    if (e.key == 'a'){
+        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.xcord -= 5
+        console.log('move ss left',spaceshipImage.xcord, spaceshipImage.ycord)
+        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+    }   
+    if (e.key == 's'){
+        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.xcord += 5
+        console.log('move ss right',spaceshipImage.xcord, spaceshipImage.ycord)
+        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
+    }
+
+}
+
+document.addEventListener('keydown', navigateSpaceship)
 
 
 
@@ -82,6 +83,26 @@ ctx.fillStyle = gradient;
 //to move the supernova up the screen change the second value, when the second value is 0 it's the top of the screen
 ctx.fillRect(0,leftMainHeight-20,leftMainWidth,leftMainHeight);
 console.log(leftMainHeight-20,leftMainWidth,leftMainHeight);
+
+
+
+
+
+
+// fuelImage.onload = function(){
+//     let a = 0
+//     let b = 0
+//     if (fuelImage.y < canvas.height){   
+//             () => {
+//             b++
+//             console.log('hi')
+//             ctx.drawImage(fuelImage, a,b,fuelImage.width,fuelImage.height)
+//             }
+//         }
+        
+
+    
+//     }
 
 
 
