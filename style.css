@@ -1,14 +1,17 @@
 body{
     background-color: black;
     font-family: 'Handlee', cursive;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
 }
 
 #gameboard{
     display: grid;
-    min-height: 150vh;
-    /* margin: 0; */
-    grid-template-columns: 150px 5fr;
-    grid-template-rows: 100px 4fr;
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: 10% 90%; /*150px 5fr*/
+    grid-template-rows: 10% 90%; /*100px 2fr*/
     grid-template-areas: "left-top middle-top"
                          "left-aside left-main"
 }
@@ -24,12 +27,17 @@ body{
 
 #middle-top{
     grid-area: middle-top;
-
     /* background-color: aqua; */
 }
 
 #left-aside{
     grid-area: left-aside;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    border-top-color: white;
+    border-top-style: solid;
+    border-top-width: 1px;
     border-right-color: white;
     border-right-width: 1px;
     border-right-style: solid;

@@ -1,109 +1,44 @@
+//== GLOBAL VARIABLES ==/
+
 const canvas = document.querySelector('canvas')
+const body = document.querySelector('html')
 const leftMain = document.getElementById('left-main')
 const ctx = canvas.getContext('2d')
-let leftMainHeight = leftMain.offsetHeight
-// clientHeight
-let leftMainWidth = leftMain.offsetWidth
-// clientWidth
-
+//this sets the 
+let leftMainHeight = leftMain.clientHeight//offsetHeight // as opposed to clientHeight
+let leftMainWidth = leftMain.clientWidth//offsetWidth // as opposed to clientWidth
+let bodyHeight = body.clientHeight
+let bodyWidth = body.clientWidth
 
 //set canvas to the height / width of the div that contains it
 //this sets it once and keeps it at that size
 //TODO once you start the game you can't resize!!!
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
-
-//check canvas width height
-console.log("heightOfCanvas",leftMainHeight)
-console.log("widthOfCanvas", leftMainWidth)
-
-// console.log(ctx)
-// console.log(leftMain.clientWidth)
-// console.log(leftMain.clientHeight)
-
-//==SPACESHIP==>
-
-    const spaceshipImage = document.createElement('img')
-    spaceshipImage.src = 'spaceship.png'
-    spaceshipImage.width = 60
-    spaceshipImage.height = 100
-    spaceshipImage.xcord = leftMainWidth/2
-    spaceshipImage.ycord = leftMainHeight-175
-    spaceshipImage.alt = 'spaceship'
-    
-    //check the values are set
-    console.log("checkspaceshipImageCreateValues", "src", spaceshipImage.src, "img width",spaceshipImage.width, "img height", spaceshipImage.height, "img x", spaceshipImage.xcord, "img y", spaceshipImage.ycord)
-
-
-function loadSpaceship(){
- 
-    //load spaceship in starting position
-    spaceshipImage.onload = function(){
-        
-        ctx.drawImage(spaceshipImage, spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width,spaceshipImage.height)
-        //check drawImage values
-        console.log("SpaceshipdrawImgValues","x",spaceshipImage.xcord,"y",spaceshipImage.ycord,"width",spaceshipImage.width,"height",spaceshipImage.height)
-      
-        }
-    }
-
-loadSpaceship()
-
-function navigateSpaceship(e){
-    
-    if (e.key == 'a'){
-        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-        spaceshipImage.xcord -= 5
-        console.log('move ss left',"xcord",spaceshipImage.xcord, "ycord",spaceshipImage.ycord,"x", spaceshipImage.x, "y", spaceshipImage.y)
-        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-    }   
-    if (e.key == 's'){
-        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-        spaceshipImage.xcord += 5
-        console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
-        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
-    }
-
-}
-
-document.addEventListener('keydown', navigateSpaceship)
-
-function moveSpaceship(updown){
-    //if astroid collision then move spaceship down 1
-    //if fuel collision then move spaceship up 1
-    
-    rememberSpaceShipLocX = spaceshipImage.xcord
-    rememberSpaceShipLocY = spaceshipImage.ycord
-    
-    ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-    
-        console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
-    
-    if(updown = "fuel"){
-        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
-            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
-    }
-    if (updown = "astroid"){
-        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-10,spaceshipImage.width, spaceshipImage.height)
-            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
-    }
-}
+// html.setAttribute('height',leftMainHeight)
+// html.setAttribute('width',leftMainWidth)
 
 
 
-//need to randomly generate number and assign to fuel or to astroid
+    //check canvas width height
+    console.log("heightOfCanvas",leftMainHeight)
+    console.log("widthOfCanvas", leftMainWidth)
+    console.log("widthOfBody", bodyWidth)
+    console.log("heightOfBody", bodyHeight)
+    // console.log(ctx)
+    // console.log(leftMain.clientWidth)
+    // console.log(leftMain.clientHeight)
 
-function getRandomInt(n){
-    return Math.floor(Math.random() * n)
-}
+//== GENERIC FUNCTIONS ==//
 
-function createNewImage(name,src,width,height,xcord,ycord,alt)  {
-        name.src= src
-        name.width = width
-        name.height = height
-        name.xcord = xcord
-        name.ycord = ycord
-        name.alt = alt
+//create and load images
+function createNewImage(name, src,width,height,xcord,ycord,alt)  {
+    name.src= src
+    name.width = width
+    name.height = height
+    name.xcord = xcord
+    name.ycord = ycord
+    name.alt = alt
 }
 
 function loadImage(name){
@@ -115,13 +50,84 @@ function loadImage(name){
             //check drawImage values
             console.log(name,"drawImgValues","x",name.xcord,"y",name.ycord,"width",name.width,"height",name.height)
         }
-    }
+}
     
-//move image && detect collision
+//clear image
 
+function clearImage(name){
+    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
+
+}
+
+//==SPACESHIP==>
+
+//create spaceship
+const spaceshipImage = document.createElement('img')
+createNewImage(spaceshipImage,'spaceship.png',60,100,leftMainWidth/2,leftMainHeight-175,'spaceship')
+   
+    //check the values are set
+    console.log("checkspaceshipImageCreateValues", "src", spaceshipImage.src, "img width",spaceshipImage.width, "img height", spaceshipImage.height, "img x", spaceshipImage.xcord, "img y", spaceshipImage.ycord)
+
+//load spaceship
+loadImage(spaceshipImage)
+
+//keys to move the spaceship, clear image and redraw image when moved
+function navigateSpaceship(e){
+    
+    if (e.key == 'a'){
+        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.xcord -= 5
+            // check values
+            console.log('move ss left',"xcord",spaceshipImage.xcord, "ycord",spaceshipImage.ycord,"x", spaceshipImage.x, "y", spaceshipImage.y)
+        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+    }   
+    if (e.key == 's'){
+        ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.xcord += 5
+            //check values
+            console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
+        ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
+    }
+
+}
+
+// event listener to control the spaceship
+document.addEventListener('keydown', navigateSpaceship)
+
+// moves spaceship based on rules for fuel / astroid collision
+function moveSpaceship(updown){
+    
+    rememberSpaceShipLocX = spaceshipImage.xcord
+    rememberSpaceShipLocY = spaceshipImage.ycord
+    
+    ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+        //check values
+        console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
+    
+    if(updown = "fuel"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
+            //check values    
+            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+    }
+    if (updown = "astroid"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-10,spaceshipImage.width, spaceshipImage.height)
+            //check values
+            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+    }
+}
+
+
+//need to randomly generate number and assign to fuel or to astroid
+
+function getRandomInt(n){
+    return Math.floor(Math.random() * n)
+}
+
+//move images && detect collision with astroid or fuel
 function moveImage(name, type){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
     name.ycord += 5
+        //check values
         console.log(name,'move',"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
     ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
 
@@ -134,19 +140,13 @@ function moveImage(name, type){
     let test3 = (spaceshipImage.xcord+60 >=name.xcord &&spaceshipImage.xcord+60 <= name.xcord+30)
     let test4 = (spaceshipImage.xcord < name.xcord && spaceshipImage.xcord+60 > name.xcord+30)
     if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
-        console.log(type,"hit spaceship")
+            //check values
+            console.log(name,type,"hit spaceship")
         clearInterval(name + 'Interval')
-        clearFuel()
+        clearImage(name)
         moveSpaceship(type)
         
     }
-
-}
-
-//clear image
-
-function clearFuel(name){
-    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
 
 }
 
@@ -163,9 +163,11 @@ createNewImage(fuelImage1,'sun.jpeg',30,30,getRandomInt(leftMainHeight)+10,10,'s
     //check the values are set
     console.log("checksFuelImageCreateValues", "src", fuelImage.src, "img width",fuelImage.width, "img height", fuelImage.height, "img x", fuelImage.xcord, "img y", fuelImage.ycord)
 
+// load fuel images
 loadImage(fuelImage)
 loadImage(fuelImage1)
 
+//interval to move the astroids on the screen
 const fuelImageInterval = setInterval(()=>{moveImage(fuelImage,"fuel")},1000)
 const fuelImage1Interval = setInterval(()=>{moveImage(fuelImage1,"fuel")},2000)
 
@@ -185,9 +187,11 @@ createNewImage(astroidImage1,'astroid1.jpg',30,30,getRandomInt(leftMainHeight),0
 
     console.log("checksAstroidImageCreateValues", "src", astroidImage.src, "img width",astroidImage.width, "img height", astroidImage.height, "img x", astroidImage.xcord, "img y", astroidImage.ycord)
 
+// load astroid images
 loadImage(astroidImage)
 loadImage(astroidImage1)
 
+// interval to move the astroids on the screen
 const astroidImageInterval = setInterval(()=>{moveImage(astroidImage,"astroid")},1000)
 const astroidImage1Interval = setInterval(()=>{moveImage(astroidImage1,"astroid")},2000)
 
