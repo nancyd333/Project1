@@ -23,7 +23,6 @@ console.log("widthOfCanvas", leftMainWidth)
 
 //==SPACESHIP==>
 
-// const spaceshipImage = new Image()
     const spaceshipImage = document.createElement('img')
     spaceshipImage.src = 'spaceship.png'
     spaceshipImage.width = 60
@@ -43,7 +42,7 @@ function loadSpaceship(){
         
         ctx.drawImage(spaceshipImage, spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width,spaceshipImage.height)
         //check drawImage values
-        console.log("drawImgValues","x",spaceshipImage.xcord,"y",spaceshipImage.ycord,"width",spaceshipImage.width,"height",spaceshipImage.height)
+        console.log("SpaceshipdrawImgValues","x",spaceshipImage.xcord,"y",spaceshipImage.ycord,"width",spaceshipImage.width,"height",spaceshipImage.height)
       
         }
     }
@@ -61,7 +60,7 @@ function navigateSpaceship(e){
     if (e.key == 's'){
         ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
         spaceshipImage.xcord += 5
-        console.log('move ss right',spaceshipImage.xcord, spaceshipImage.ycord)
+        console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
         ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
     }
 
@@ -69,53 +68,159 @@ function navigateSpaceship(e){
 
 document.addEventListener('keydown', navigateSpaceship)
 
-function spaceshipResources(){
+function moveSpaceship(updown){
     //if astroid collision then move spaceship down 1
     //if fuel collision then move spaceship up 1
+    
+    rememberSpaceShipLocX = spaceshipImage.xcord
+    rememberSpaceShipLocY = spaceshipImage.ycord
+    
+    ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+    
+        console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
+    
+    if(updown = "fuel"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
+            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+    }
+    if (updown = "astroid"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-10,spaceshipImage.width, spaceshipImage.height)
+            console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+    }
 }
 
 //== FUEL ==//
 
-const fuelRectX = 20 // this can be randomly generated between 2 nos and determins which "column" fuel drops from, THIS IS THE ONLY VALUE THAT NEED TO CHANGE
-const fuelRectY = 20 // this will increase on increment to move down the screen, however the orb Y needs to move with it, THIS IS THE ONLY VALUE THAT NEED TO CHANGE
-const fuelRectWidth = 40 // this is static
-const fuelRectHeight = fuelRectWidth // this is static
+//need to randomly generate number and assign to fuel or to astroid
 
-const fueliX= fuelRectX*2 // this will be part of the random generation to get it on the proper column
-const fueliY= fuelRectY*2 // this has to increase when the orb moves down the screen
-const fueliRad= 2 // this is static
-
-const fueloX= fuelRectX*2 // this will be part of the random generation to get it on the proper column
-const fueloY= fuelRectY*2 // this has to increase when the orb moves down the screen
-const fueloRad= 20 // this is static
-
-
-
-function createFuel(){
-    // Create a radial gradient
-    // The inner circle is at x=110, y=90, with radius=30
-    // The outer circle is at x=100, y=100, with radius=70
-    // const gradientFuel = ctx.createRadialGradient(55, 45, 5, 50, 50, 20);
-    const gradientFuel = ctx.createRadialGradient(fueliX, fueliY, fueliRad, fueloX, fueloY, fueloRad);
-    // Add three color stops
-    gradientFuel.addColorStop(0, "blue");
-    gradientFuel.addColorStop(0.9, "white");
-    gradientFuel.addColorStop(1, "black");
-
-    // Set the fill style and draw a rectangle
-    ctx.fillStyle = gradientFuel;
-    ctx.fillRect(fuelRectX, fuelRectY, fuelRectWidth, fuelRectHeight);
+function getRandomInt(n){
+    return Math.floor(Math.random() * n)
+    
 }
 
-createFuel()
+const fuelImage = document.createElement('img')
+fuelImage.src = 'sun.jpeg'
+fuelImage.width = 30
+fuelImage.height = 30
+fuelImage.xcord = getRandomInt(leftMainHeight)
+fuelImage.ycord = 0
+fuelImage.alt = 'sun'
+
+//check the values are set
+console.log("checksFuelImageCreateValues", "src", fuelImage.src, "img width",fuelImage.width, "img height", fuelImage.height, "img x", fuelImage.xcord, "img y", fuelImage.ycord)
 
 
-//--HOW DO YOU MOVE FUEL??==//
+function loadFuel(){
 
-// function changeFuel(){
-//     gradientFuel = ctx.createRadialGradient(fueliX, fueliY, fueliRad, fueloX, fueloY, fueloRad);
-//     ctx.fillRect(fuelRectX, fuelRectY, fuelRectWidth, fuelRectHeight);
-// }
+//load spaceship in starting position
+fuelImage.onload = function(){
+    
+    ctx.drawImage(fuelImage, fuelImage.xcord,fuelImage.ycord,fuelImage.width,fuelImage.height)
+    //check drawImage values
+    console.log("FueldrawImgValues","x",fuelImage.xcord,"y",fuelImage.ycord,"width",fuelImage.width,"height",fuelImage.height)
+  
+    }
+}
+
+loadFuel()
+
+
+//move fuel && detect collision
+
+function moveFuel(){
+    ctx.clearRect(fuelImage.xcord, fuelImage.ycord, fuelImage.width, fuelImage.height)
+    fuelImage.ycord += 5
+        console.log('move fuel',"xcord",fuelImage.xcord, "ycord",fuelImage.ycord,"x", fuelImage.x, "y", fuelImage.y)
+    ctx.drawImage(fuelImage,fuelImage.xcord,fuelImage.ycord, fuelImage.width, fuelImage.height)
+
+    //y: on the same plane so you just need to check one from fuel and space ship
+    //x: one corner from fuel should be between both corners from spaceship
+    //x: other corner from fuel shold be between both corners from spaceship
+
+    let test1 = (spaceshipImage.ycord <= fuelImage.ycord+30)
+    let test2 = (spaceshipImage.xcord >=fuelImage.xcord &&spaceshipImage.xcord <= fuelImage.xcord+30)
+    let test3 = (spaceshipImage.xcord+60 >=fuelImage.xcord &&spaceshipImage.xcord+60 <= fuelImage.xcord+30)
+    let test4 = (spaceshipImage.xcord < fuelImage.xcord && spaceshipImage.xcord+60 > fuelImage.xcord+30)
+    if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
+        console.log("fuel hit spaceship")
+        clearInterval(moveFuelInterval)
+        clearFuel()
+        moveSpaceship("fuel")
+        
+    }
+
+}
+
+const moveFuelInterval = setInterval(moveFuel,1000)
+
+function clearFuel(){
+    ctx.clearRect(fuelImage.xcord, fuelImage.ycord, fuelImage.width, fuelImage.height)
+
+}
+
+
+//== ASTRIOD ==//
+
+const astroid1Image = document.createElement('img')
+astroid1Image.src = 'astroid1.jpg'
+astroid1Image.width = 30
+astroid1Image.height = 30
+astroid1Image.xcord = getRandomInt(leftMainHeight)
+astroid1Image.ycord = 0
+astroid1Image.alt = 'astriod'
+
+//check the values are set
+console.log("checksAstroidImageCreateValues", "src", astroid1Image.src, "img width",astroid1Image.width, "img height", astroid1Image.height, "img x", astroid1Image.xcord, "img y", astroid1Image.ycord)
+
+
+function loadAstroid(){
+
+//load astroid in starting position
+astroid1Image.onload = function(){
+    
+    ctx.drawImage(astroid1Image, astroid1Image.xcord,astroid1Image.ycord,astroid1Image.width,astroid1Image.height)
+    //check drawImage values
+    console.log("AstroiddrawImgValues","x",astroid1Image.xcord,"y",astroid1Image.ycord,"width",astroid1Image.width,"height",astroid1Image.height)
+  
+    }
+}
+
+loadAstroid()
+
+
+//move astroid && detect collision
+
+function moveAstroid(){
+    ctx.clearRect(astroid1Image.xcord, astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
+    astroid1Image.ycord += 5
+        console.log('move astroid',"xcord",astroid1Image.xcord, "ycord",astroid1Image.ycord,"x", astroid1Image.x, "y", astroid1Image.y)
+    ctx.drawImage(astroid1Image,astroid1Image.xcord,astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
+
+    //y: on the same plane so you just need to check one from fuel and space ship
+    //x: one corner from fuel should be between both corners from spaceship
+    //x: other corner from fuel shold be between both corners from spaceship
+
+    let test1 = (spaceshipImage.ycord <= astroid1Image.ycord+30)
+    let test2 = (spaceshipImage.xcord >=astroid1Image.xcord &&spaceshipImage.xcord <= astroid1Image.xcord+30)
+    let test3 = (spaceshipImage.xcord+60 >=astroid1Image.xcord &&spaceshipImage.xcord+60 <= astroid1Image.xcord+30)
+    let test4 = (spaceshipImage.xcord < astroid1Image.xcord && spaceshipImage.xcord+60 > astroid1Image.xcord+30)
+    if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
+        console.log("astroid hit spaceship")
+        clearInterval(moveAstroidInterval)
+        clearAstroid()
+        moveAstroid("astroid")
+        
+    }
+
+}
+
+const moveAstroidInterval = setInterval(moveAstroid,1000)
+
+function clearAstroid(){
+    ctx.clearRect(astroid1Image.xcord, astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
+
+}
+
 
 
 
@@ -153,11 +258,16 @@ function moveSuperNova(){
     
     if(spaceshipImage.ycord+100 == supernovaY){
         console.log("supernova hit spaceship")
-        // NEED TO ADD END OF GAME OUT LOGIC
+        //cover the screen with the supernova
+        ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
+        clearFuel();
     }
 
 }
-// setInterval(moveSuperNova, 800)
+
+setInterval(moveSuperNova, 800)
+
+
 
 
 
