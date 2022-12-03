@@ -3,10 +3,6 @@ body{
     font-family: 'Handlee', cursive;
 }
 
-canvas{
-    border:1px solid black;
-}
-
 #gameboard{
     display: grid;
     min-height: 150vh;
@@ -20,28 +16,34 @@ canvas{
 
 #left-top{
     grid-area: left-top;
-    background-color: aqua;
+    border-right-color: white;
+    border-right-width: 1px;
+    border-right-style: solid;
+    /* background-color: aqua; */
 }
 
 #middle-top{
     grid-area: middle-top;
 
-    background-color: aqua;
+    /* background-color: aqua; */
 }
 
 #left-aside{
     grid-area: left-aside;
-    background-color: magenta;
+    border-right-color: white;
+    border-right-width: 1px;
+    border-right-style: solid;
+    /* background-color: magenta; */
 }
 
 #left-main{
     grid-area: left-main;
-    background-color: yellow;
+    /* background-color: yellow; */
 
 
 }
 #user-message{
-    background-color: purple;
+    /* background-color: purple; */
     padding: 5px;
     margin: 20px 30px;
     height: 50px;

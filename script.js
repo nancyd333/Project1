@@ -89,142 +89,107 @@ function moveSpaceship(updown){
     }
 }
 
-//== FUEL ==//
+
 
 //need to randomly generate number and assign to fuel or to astroid
 
 function getRandomInt(n){
     return Math.floor(Math.random() * n)
-    
 }
 
-const fuelImage = document.createElement('img')
-fuelImage.src = 'sun.jpeg'
-fuelImage.width = 30
-fuelImage.height = 30
-fuelImage.xcord = getRandomInt(leftMainHeight)
-fuelImage.ycord = 0
-fuelImage.alt = 'sun'
+function createNewImage(name,src,width,height,xcord,ycord,alt)  {
+        name.src= src
+        name.width = width
+        name.height = height
+        name.xcord = xcord
+        name.ycord = ycord
+        name.alt = alt
+}
 
-//check the values are set
-console.log("checksFuelImageCreateValues", "src", fuelImage.src, "img width",fuelImage.width, "img height", fuelImage.height, "img x", fuelImage.xcord, "img y", fuelImage.ycord)
+function loadImage(name){
 
-
-function loadFuel(){
-
-//load spaceship in starting position
-fuelImage.onload = function(){
-    
-    ctx.drawImage(fuelImage, fuelImage.xcord,fuelImage.ycord,fuelImage.width,fuelImage.height)
-    //check drawImage values
-    console.log("FueldrawImgValues","x",fuelImage.xcord,"y",fuelImage.ycord,"width",fuelImage.width,"height",fuelImage.height)
-  
+    //generate image on page
+    name.onload = function(){
+        
+        ctx.drawImage(name, name.xcord,name.ycord,name.width,name.height)
+            //check drawImage values
+            console.log(name,"drawImgValues","x",name.xcord,"y",name.ycord,"width",name.width,"height",name.height)
+        }
     }
-}
+    
+//move image && detect collision
 
-loadFuel()
+function moveImage(name, type){
+    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
+    name.ycord += 5
+        console.log(name,'move',"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
+    ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
 
+    //y: on the same plane so you just need to check one from fuel/astroid and space ship
+    //x: one corner from fuel/astroid should be between both corners from spaceship
+    //x: other corner from fuel/astroid shold be between both corners from spaceship
 
-//move fuel && detect collision
-
-function moveFuel(){
-    ctx.clearRect(fuelImage.xcord, fuelImage.ycord, fuelImage.width, fuelImage.height)
-    fuelImage.ycord += 5
-        console.log('move fuel',"xcord",fuelImage.xcord, "ycord",fuelImage.ycord,"x", fuelImage.x, "y", fuelImage.y)
-    ctx.drawImage(fuelImage,fuelImage.xcord,fuelImage.ycord, fuelImage.width, fuelImage.height)
-
-    //y: on the same plane so you just need to check one from fuel and space ship
-    //x: one corner from fuel should be between both corners from spaceship
-    //x: other corner from fuel shold be between both corners from spaceship
-
-    let test1 = (spaceshipImage.ycord <= fuelImage.ycord+30)
-    let test2 = (spaceshipImage.xcord >=fuelImage.xcord &&spaceshipImage.xcord <= fuelImage.xcord+30)
-    let test3 = (spaceshipImage.xcord+60 >=fuelImage.xcord &&spaceshipImage.xcord+60 <= fuelImage.xcord+30)
-    let test4 = (spaceshipImage.xcord < fuelImage.xcord && spaceshipImage.xcord+60 > fuelImage.xcord+30)
+    let test1 = (spaceshipImage.ycord <= name.ycord+30)
+    let test2 = (spaceshipImage.xcord >=name.xcord &&spaceshipImage.xcord <= name.xcord+30)
+    let test3 = (spaceshipImage.xcord+60 >=name.xcord &&spaceshipImage.xcord+60 <= name.xcord+30)
+    let test4 = (spaceshipImage.xcord < name.xcord && spaceshipImage.xcord+60 > name.xcord+30)
     if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
-        console.log("fuel hit spaceship")
-        clearInterval(moveFuelInterval)
+        console.log(type,"hit spaceship")
+        clearInterval(name + 'Interval')
         clearFuel()
-        moveSpaceship("fuel")
+        moveSpaceship(type)
         
     }
 
 }
 
-const moveFuelInterval = setInterval(moveFuel,1000)
+//clear image
 
-function clearFuel(){
-    ctx.clearRect(fuelImage.xcord, fuelImage.ycord, fuelImage.width, fuelImage.height)
+function clearFuel(name){
+    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
 
 }
+
+//== FUEL ==//
+
+// create the fuel images 
+
+const fuelImage = document.createElement('img')
+createNewImage(fuelImage,'sun.jpeg',30,30,getRandomInt(leftMainHeight),0,'sun')
+
+const fuelImage1 = document.createElement('img')
+createNewImage(fuelImage1,'sun.jpeg',30,30,getRandomInt(leftMainHeight)+10,10,'sun')
+
+    //check the values are set
+    console.log("checksFuelImageCreateValues", "src", fuelImage.src, "img width",fuelImage.width, "img height", fuelImage.height, "img x", fuelImage.xcord, "img y", fuelImage.ycord)
+
+loadImage(fuelImage)
+loadImage(fuelImage1)
+
+const fuelImageInterval = setInterval(()=>{moveImage(fuelImage,"fuel")},1000)
+const fuelImage1Interval = setInterval(()=>{moveImage(fuelImage1,"fuel")},2000)
+
 
 
 //== ASTRIOD ==//
 
-const astroid1Image = document.createElement('img')
-astroid1Image.src = 'astroid1.jpg'
-astroid1Image.width = 30
-astroid1Image.height = 30
-astroid1Image.xcord = getRandomInt(leftMainHeight)
-astroid1Image.ycord = 0
-astroid1Image.alt = 'astriod'
+//create new astroids
+const astroidImage = document.createElement('img')
+createNewImage(astroidImage,'astroid1.jpg',30,30,getRandomInt(leftMainHeight),0,'astroid')
 
-//check the values are set
-console.log("checksAstroidImageCreateValues", "src", astroid1Image.src, "img width",astroid1Image.width, "img height", astroid1Image.height, "img x", astroid1Image.xcord, "img y", astroid1Image.ycord)
+const astroidImage1 = document.createElement('img')
+createNewImage(astroidImage1,'astroid1.jpg',30,30,getRandomInt(leftMainHeight),0,'astroid')
 
+    //check the values are set
+    console.log("checksAstroidImage1CreateValues", "src", astroidImage1.src, "img width",astroidImage1.width, "img height", astroidImage1.height, "img x", astroidImage1.xcord, "img y", astroidImage1.ycord)
 
-function loadAstroid(){
+    console.log("checksAstroidImageCreateValues", "src", astroidImage.src, "img width",astroidImage.width, "img height", astroidImage.height, "img x", astroidImage.xcord, "img y", astroidImage.ycord)
 
-//load astroid in starting position
-astroid1Image.onload = function(){
-    
-    ctx.drawImage(astroid1Image, astroid1Image.xcord,astroid1Image.ycord,astroid1Image.width,astroid1Image.height)
-    //check drawImage values
-    console.log("AstroiddrawImgValues","x",astroid1Image.xcord,"y",astroid1Image.ycord,"width",astroid1Image.width,"height",astroid1Image.height)
-  
-    }
-}
+loadImage(astroidImage)
+loadImage(astroidImage1)
 
-loadAstroid()
-
-
-//move astroid && detect collision
-
-function moveAstroid(){
-    ctx.clearRect(astroid1Image.xcord, astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
-    astroid1Image.ycord += 5
-        console.log('move astroid',"xcord",astroid1Image.xcord, "ycord",astroid1Image.ycord,"x", astroid1Image.x, "y", astroid1Image.y)
-    ctx.drawImage(astroid1Image,astroid1Image.xcord,astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
-
-    //y: on the same plane so you just need to check one from fuel and space ship
-    //x: one corner from fuel should be between both corners from spaceship
-    //x: other corner from fuel shold be between both corners from spaceship
-
-    let test1 = (spaceshipImage.ycord <= astroid1Image.ycord+30)
-    let test2 = (spaceshipImage.xcord >=astroid1Image.xcord &&spaceshipImage.xcord <= astroid1Image.xcord+30)
-    let test3 = (spaceshipImage.xcord+60 >=astroid1Image.xcord &&spaceshipImage.xcord+60 <= astroid1Image.xcord+30)
-    let test4 = (spaceshipImage.xcord < astroid1Image.xcord && spaceshipImage.xcord+60 > astroid1Image.xcord+30)
-    if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
-        console.log("astroid hit spaceship")
-        clearInterval(moveAstroidInterval)
-        clearAstroid()
-        moveAstroid("astroid")
-        
-    }
-
-}
-
-const moveAstroidInterval = setInterval(moveAstroid,1000)
-
-function clearAstroid(){
-    ctx.clearRect(astroid1Image.xcord, astroid1Image.ycord, astroid1Image.width, astroid1Image.height)
-
-}
-
-
-
-
-
+const astroidImageInterval = setInterval(()=>{moveImage(astroidImage,"astroid")},1000)
+const astroidImage1Interval = setInterval(()=>{moveImage(astroidImage1,"astroid")},2000)
 
 
 //== SUPERNOVA ==/
@@ -234,7 +199,9 @@ function clearAstroid(){
 //this is the supernova
 //TODO fiddle with the colors
 
-let gradient = ctx.createLinearGradient(0,50,150,0);
+let gradientChangeValue = 50
+
+let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
 gradient.addColorStop('0',"purple");
 gradient.addColorStop('0.2',"orange");
 gradient.addColorStop('0.5',"magenta");
@@ -259,13 +226,23 @@ function moveSuperNova(){
     if(spaceshipImage.ycord+100 == supernovaY){
         console.log("supernova hit spaceship")
         //cover the screen with the supernova
+
+        //maybe move some of this into a reset function
+        clearImage(fuelImage);
+        clearImage(fuelImage1);
+        clearImage(astroidImage);
+        clearImage(astroidImage1);
         ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
-        clearFuel();
+        clearInterval(moveSuperNovaInterval)
+        clearInterval(fuelImageInterval)
+        clearInterval(fuelImage1Interval)
+        clearInterval(astroidImageInterval)
+        clearInterval(astroidImage1Interval)
     }
 
 }
 
-setInterval(moveSuperNova, 800)
+const moveSuperNovaInterval = setInterval(moveSuperNova, 800)
 
 
 
