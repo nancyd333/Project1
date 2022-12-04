@@ -31,7 +31,7 @@ let imgLocations = []
 let intervalList = []
 
 
-//note: supernoveInterval of 0 is the top of the screen
+//note: supernovaInterval of 0 is the top of the screen
 let supernovaY = leftMainHeight;
 let supernovaX = 0;
 let supernovaWidth = leftMainWidth;
@@ -67,6 +67,11 @@ function clearImage(name){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
 
 }
+//give two numbers and get random integer between those two numbers (inclusive of the numbers given)
+//min 0, max 10 will give random number between 0 and 10
+function getRandomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+  }
 
 //==RESET PARTS OF SCREEN based on the type of event==//
 
@@ -97,12 +102,9 @@ function reset(type){
         bodyWidth = body.clientWidth
         astroidTracker = 0
         fuelTracker = 0
-        moveSuperNovaInterval = ''
         clearInterval(moveSuperNovaInterval)
         ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight);
         userMessage.innerText = ''
-        astroidMessage.innerText = `Astroid: ${astroidTracker}`
-        fuelMessage.innerText = `Fuel: ${fuelTracker}`
         loadGame()
     } else if (type =='winGame'){
         for(let i = 0; i < imgArray.length; i++){
@@ -224,12 +226,13 @@ function setImageLocations(){
 
 //this creates the intervals for the astroid and fuel and saves the interval id for later use
 function setImageIntervals(){
-    let interval = 1000
+    let interval = 0
     for(let i = 0; i < imgArray.length; i++){
+        interval = getRandomInteger(200,1000)
         imgArray[i].intervalId = setInterval(()=>{moveImage(imgArray[i],imgArray[i].type)},interval)
             //check value
             //console.log("setImageInterval",imgArray[i])
-        interval += 1000
+        
     }
 }
 
@@ -253,6 +256,16 @@ function createPlayerAstroidMessage(){
     playerAstroidSpan.id = 'astroidSpan'
     astroidMessage.append(playerAstroidSpan)
     playerAstroidSpan.innerText = `Astroid: ${astroidTracker}`
+}
+
+function createRandomImage(num){
+    for(let i=0; i < num; i++){
+        if(getRandomInteger(0,1)==1){
+            createImageArray(1,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
+        } else {
+            createImageArray(1,'astroidImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
+        }
+    }
 }
 
 
@@ -280,11 +293,13 @@ function loadGame(){
     //== FUEL AND ASTROIDS ==//
 
     // create fuel images 
-    createImageArray(10,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
+    //createImageArray(10,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
     
     // create astroid images
    // createImageArray(6,'astroidImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
     
+    createRandomImage(10)
+
     //populates the image locations so they know where display on screen
     populateImgLocationsArray()
 
@@ -318,7 +333,7 @@ function loadGame(){
     ctx.fillStyle = gradient;
 
     createSuperNova()
-    moveSuperNovaInterval = setInterval(moveSuperNova, 2000)
+    moveSuperNovaInterval = setInterval(moveSuperNova, 3000)
 
 
 }
