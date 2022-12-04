@@ -22,7 +22,7 @@ Two player version
 - CSS
 - JavaScript
 
-# MVP Checklist
+# MVP Checklistaa
 - Basic gameboard layout
 - Section for Player
 - Section for displaying win/lose status

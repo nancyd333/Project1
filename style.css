@@ -27,6 +27,7 @@ body{
 
 #middle-top{
     grid-area: middle-top;
+
     /* background-color: aqua; */
 }
 
@@ -52,24 +53,24 @@ body{
 }
 #user-message{
     /* background-color: purple; */
-    padding: 5px;
-    margin: 20px 30px;
-    height: 50px;
-    color: black;
+    padding-top: 5px;
+    margin: 0px;
+    color: white;
+    font-size: 16px;
     text-align: center;
 }
 .button{
-    background-color: white;
-    color: black;
+    background-color: #6096ba;
+    color: white;
     border-radius: 5px;
-    border: 1px solid white;
-    padding: 5px 10px;
+    border: 1px solid #6096ba;
     font-size: 16px;
 }
 #resetButton{
     margin-top: 10%;
     margin-left: 10%;
     font-size: 12px;
+    padding: 5px;
 }
 
 #player-one{
