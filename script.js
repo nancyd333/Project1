@@ -45,16 +45,15 @@ let moveSuperNovaInterval = ''
 //this sets it once and keeps it at that size
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
-// html.setAttribute('height',leftMainHeight)
-// html.setAttribute('width',leftMainWidth)
+
 
 
 
     //check value
-    console.log("heightOfCanvas",leftMainHeight)
-    console.log("widthOfCanvas", leftMainWidth)
-    console.log("widthOfBody", bodyWidth)
-    console.log("heightOfBody", bodyHeight)
+    // console.log("heightOfCanvas",leftMainHeight)
+    // console.log("widthOfCanvas", leftMainWidth)
+    // console.log("widthOfBody", bodyWidth)
+    // console.log("heightOfBody", bodyHeight)
     // console.log(ctx)
     // console.log(leftMain.clientWidth)
     // console.log(leftMain.clientHeight)
@@ -78,6 +77,7 @@ function getRandomInteger(min, max) {
 //==RESET PARTS OF SCREEN based on the type of event==//
 
 function reset(type){
+    ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
     if(type=='supernovaEvent'){
         for(let i = 0; i < imgArray.length; i++){
             clearImage(imgArray[i])
@@ -116,8 +116,11 @@ function reset(type){
      }
 }
 
+//used by button to reset game
 function onResetClick(){
     reset('resetGame')
+    
+    //check value
     console.log('reset clicked')
 
 }
@@ -125,7 +128,7 @@ function onResetClick(){
 //==SPACESHIP==> 
 
 //create spaceship image
- function createNewImage(name, src,width,height,xcord,ycord,alt)  {
+ function createSpaceshipImage(name, src,width,height,xcord,ycord,alt)  {
     name.src= src
     name.width = width
     name.height = height
@@ -135,7 +138,7 @@ function onResetClick(){
 }
 
 //load spaceship image
-function loadImage(name){
+function loadSpaceshipImage(name){
     //generate image on page
     name.onload = function(){
             
@@ -144,6 +147,7 @@ function loadImage(name){
         // console.log(name,"drawImgValues","x",name.xcord,"y",name.ycord,"width",name.width,"height",name.height)
     }
 }
+
 
 //==SUPERNOVA==//
 
@@ -166,14 +170,12 @@ const baseImageArray= {
     xcord: '',
     ycord: '',
     alt: '',
-    id: '',
     type: '',
     intervalId: '',
     imgLocId: ''
 }
 
-//fuel object storing information about fuel
-// function createBaseFuelObject(){
+// stores information about fuel
     const fuelImg = Object.create(baseImageArray);
     fuelImg.name = 'fuelImage' 
     fuelImg.src = fuelPic
@@ -182,15 +184,11 @@ const baseImageArray= {
     fuelImg.xcord = 0
     fuelImg.ycord = 0
     fuelImg.alt = fuelAlt
-    // fuelImg.id = ''
     fuelImg.type = 'fuel'
     fuelImg.intervalId = ''
     fuelImg.imgLocId = ''
 
-// }
-
-//astroid object storing information about astroid
-// function createBaseAstroidObject(){
+// stores information about astroid
     const astroidImg = Object.create(baseImageArray);
     astroidImg.name = 'astroidImage' 
     astroidImg.src = astroidPic
@@ -199,12 +197,9 @@ const baseImageArray= {
     astroidImg.xcord = 0
     astroidImg.ycord = 0
     astroidImg.alt = astroidAlt
-    // astroidImg.id = ''
     astroidImg.type = 'astroid'
     astroidImg.intervalId = ''
     astroidImg.imgLocId = ''
-
-// }
 
 
 
@@ -229,7 +224,6 @@ function createImageArray(name, src, width, height, xcord, ycord,alt, type){
         imgArray[i].ycord = ycord
         imgArray[i].alt = alt
         imgArray[i].display = "none"
-        // imgArray[i].id = name + i
         imgArray[i].type = type
         imgArray[i].intervalId = ''
         imgArray[i].imgLocId = ''
@@ -270,7 +264,7 @@ function setImageLocations(){
 
 }
 
-//this creates the intervals for the astroid and fuel and saves the interval id for later use
+//creates the intervals for the astroid and fuel and saves the interval id for later use
 function setImageIntervals(){
     let interval = 0
     for(let i = 0; i < imgArray.length; i++){
@@ -319,8 +313,7 @@ function createRandomImage(num){
     }
 }
 
-//once astroid/fuel hits supernova a random fuel/astroid needs to be added to that array location and fall from the ycord 0 but the same xcord as the one that hit the supernova, also keeping the same interval id
-
+//once astroid/fuel hits supernova a random fuel/astroid needs to be added to that array location and fall from the ycord 0 but the same xcord as the one that hit the supernova
 function recycleRandomImage(array){
     clearImage(array)
     //check value
@@ -375,13 +368,13 @@ function loadGame(){
     //==SPACESHIP==>
 
     //create spaceship image
-    createNewImage(spaceshipImage, spacePic,60,100,leftMainWidth/2,leftMainHeight-175, spaceAlt)
+    createSpaceshipImage(spaceshipImage, spacePic,60,100,leftMainWidth/2,leftMainHeight-175, spaceAlt)
     
         //check value
         console.log("checkspaceshipImageCreateValues", "src", spaceshipImage.src, "img width",spaceshipImage.width, "img height", spaceshipImage.height, "img x", spaceshipImage.xcord, "img y", spaceshipImage.ycord)
 
     //loads spaceship image
-    loadImage(spaceshipImage)
+    loadSpaceshipImage(spaceshipImage)
 
   
     //== FUEL AND ASTROIDS ==//
@@ -399,10 +392,8 @@ function loadGame(){
 
     //== SUPERNOVA ==//
 
-    //TODO make the gradient move across the screen back and forth
     //changing the 50 value in the gradient will make the line appear to move ctx.createLinearGradient(0,50,150,0);
-    
-    //this is the supernova
+    //this is the supernova gradient
     let gradientChangeValue = 50
 
     let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
@@ -518,27 +509,22 @@ function detectShipWinCollision(){
 }
 
 //collision between the supernova and the fuel/astroid
+//new fuel/astroid generated
 function detectSuperNovaCollision(array){
     if(supernovaY <= array.ycord+60){
-        // let recycleImgId = array.imgLocId
-        // clearInterval(array.intervalId)
-        // array.intervalId = ''
-        // clearImage(array)
         recycleRandomImage(array)
-
     }
 
 }
 
 
-//ADD WHAT HERE
+//moves astroid and fuel images and detects collisions with ship or supernova
 function moveImage(name, type){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
     name.ycord += 5
         //check value
         //console.log("moveImage", name,"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
     ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
-
     detectShipCollision(name,type)
     detectSuperNovaCollision(name)
     detectShipWinCollision()
@@ -549,10 +535,11 @@ function moveImage(name, type){
 
 //== SUPERNOVA ==/
 
-
+//initiates supernova creation
+//detects lose condition, supernova hits spaceship
 function moveSuperNova(){
     createSuperNova()
-    if(spaceshipImage.ycord+100 == supernovaY){
+    if(spaceshipImage.ycord+100 >= supernovaY){
         //check condition
         console.log("supernova hit spaceship")
         
