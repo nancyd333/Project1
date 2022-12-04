@@ -6,8 +6,13 @@ const leftMain = document.getElementById('left-main')
 const resetButton = document.getElementById('resetButton')
 const spaceshipImage = document.createElement('img')
 const userMessage = document.getElementById('user-message')
+const playerOneDiv = document.getElementById('player-one')
 const fuelMessage = document.getElementById('fuel')
 const astroidMessage = document.getElementById('astroid')
+const playerFuelImg = document.createElement('img')
+const playerFuelSpan = document.createElement('span')
+const playerAstroidImg = document.createElement('img')
+const playerAstroidSpan = document.createElement('span')
 const ctx = canvas.getContext('2d')
 let astroidTracker = 0
 let fuelTracker = 0
@@ -55,14 +60,16 @@ canvas.setAttribute('width',leftMainWidth)
 
 //== MULTI-PURPOSE FUNCTIONS ==//
  
-//clears image from screen
-//this is used to when you need to clear image before redrawing, or just to remove it altogether
+//==CLEAR IMAGE from screen==/
+
+//use this to clear image before redrawing, or just to remove it altogether
 function clearImage(name){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
 
 }
 
-// reset parts of screen based on the type of event
+//==RESET PARTS OF SCREEN based on the type of event==//
+
 function reset(type){
     if(type=='supernovaEvent'){
         for(let i = 0; i < imgArray.length; i++){
@@ -97,7 +104,18 @@ function reset(type){
         astroidMessage.innerText = `Astroid: ${astroidTracker}`
         fuelMessage.innerText = `Fuel: ${fuelTracker}`
         loadGame()
-    }
+    } else if (type =='winGame'){
+        for(let i = 0; i < imgArray.length; i++){
+            clearImage(imgArray[i])
+            clearInterval(imgArray[i].intervalId)
+         }
+     }
+}
+
+function onResetClick(){
+    reset('resetGame')
+    console.log('reset clicked')
+
 }
 
 //==SPACESHIP==> 
@@ -206,7 +224,7 @@ function setImageLocations(){
 
 //this creates the intervals for the astroid and fuel and saves the interval id for later use
 function setImageIntervals(){
-    let interval = 500
+    let interval = 1000
     for(let i = 0; i < imgArray.length; i++){
         imgArray[i].intervalId = setInterval(()=>{moveImage(imgArray[i],imgArray[i].type)},interval)
             //check value
@@ -215,12 +233,37 @@ function setImageIntervals(){
     }
 }
 
+function createPlayerFuelMessage(){
+    playerFuelImg.src = fuelPic
+    playerFuelImg.alt = fuelAlt
+    playerFuelImg.width = 10
+    playerFuelImg.height = 10
+    fuelMessage.append(playerFuelImg)
+    playerFuelSpan.id = 'fuelSpan'
+    fuelMessage.append(playerFuelSpan)
+    playerFuelSpan.innerText = `Fuel: ${fuelTracker}`
+}
+
+function createPlayerAstroidMessage(){
+    playerAstroidImg.src = astroidPic
+    playerAstroidImg.alt = astroidAlt
+    playerAstroidImg.width = 15
+    playerAstroidImg.height = 15
+    astroidMessage.append(playerAstroidImg)
+    playerAstroidSpan.id = 'astroidSpan'
+    astroidMessage.append(playerAstroidSpan)
+    playerAstroidSpan.innerText = `Astroid: ${astroidTracker}`
+}
+
+
+//== LOAD GAME ==//
+
 // loads the game
 function loadGame(){
 
     //populate Player 1 messages
-    astroidMessage.innerText = `Astroid: ${astroidTracker}`
-    fuelMessage.innerText = `Fuel: ${fuelTracker}`
+    createPlayerFuelMessage()
+    createPlayerAstroidMessage()
 
     //==SPACESHIP==>
 
@@ -237,10 +280,10 @@ function loadGame(){
     //== FUEL AND ASTROIDS ==//
 
     // create fuel images 
-    createImageArray(3,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
+    createImageArray(10,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
     
     // create astroid images
-    createImageArray(6,'astroidImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
+   // createImageArray(6,'astroidImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
     
     //populates the image locations so they know where display on screen
     populateImgLocationsArray()
@@ -262,8 +305,8 @@ function loadGame(){
 
     //TODO make the gradient move across the screen back and forth
     //changing the 50 value in the gradient will make the line appear to move ctx.createLinearGradient(0,50,150,0);
+    
     //this is the supernova
-
     let gradientChangeValue = 50
 
     let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
@@ -275,12 +318,14 @@ function loadGame(){
     ctx.fillStyle = gradient;
 
     createSuperNova()
-    moveSuperNovaInterval = setInterval(moveSuperNova, 800)
+    moveSuperNovaInterval = setInterval(moveSuperNova, 2000)
 
 
 }
 
 loadGame()
+
+//==SPACESHIP==/
 
 //keys to move the spaceship, clear image and redraw image when moved
 function navigateSpaceship(e){
@@ -317,20 +362,22 @@ function moveSpaceship(updown){
     if(updown == "fuel"){
         ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-50,spaceshipImage.width, spaceshipImage.height)
         spaceshipImage.ycord -= 50
-        fuelTracker+=50
-        fuelMessage.innerText = `Fuel: ${fuelTracker}`
+        fuelTracker+=1
+        createPlayerFuelMessage()
             //check value  
             console.log("moveSpaceshipfuel","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
     if (updown == "astroid"){
         ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
         spaceshipImage.ycord +=10
-        astroidTracker+=10
-        astroidMessage.innerText = `Astroid: ${astroidTracker}`
+        astroidTracker+=1
+        createPlayerAstroidMessage()
             //check value
             console.log("moveSpaceshipastroid","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
 }
+
+//== COLLISIONS ==//
 
 // collision between the spaceship and the fuel/astroid
 function detectShipCollision(name,type){
@@ -354,6 +401,25 @@ function detectShipCollision(name,type){
     }
 }
 
+//spaceship reaches top of screen
+//win condition detected
+function detectShipWinCollision(){
+    let test1 = spaceshipImage.ycord
+    if(test1 <= 0){
+        //change user message to win
+        userMessage.innerText = 'You were able to escape! Congratulations!'
+        //remove astroid/fuel images
+        reset('winGame')
+        //change gameboard color to blue
+        ctx.fillStyle = "blue";
+        ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
+        clearInterval(moveSuperNovaInterval)
+    }
+        
+        
+}
+
+
 //collision between the supernova and the fuel/astroid
 function detectSuperNovaCollision(array){
     if(supernovaY <= array.ycord+100){
@@ -374,8 +440,11 @@ function moveImage(name, type){
 
     detectShipCollision(name,type)
     detectSuperNovaCollision(name)
+    detectShipWinCollision()
 
 }
+
+
 
 //== SUPERNOVA ==/
 
@@ -397,11 +466,8 @@ function moveSuperNova(){
 
 }
 
-function onResetClick(){
-    reset('resetGame')
-    console.log('reset clicked')
+//==RESET BUTTON==//
 
-}
 
 resetButton.addEventListener("click", onResetClick)
 
