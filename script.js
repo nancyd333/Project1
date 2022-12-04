@@ -322,7 +322,7 @@ function createRandomImage(num){
 //once astroid/fuel hits supernova a random fuel/astroid needs to be added to that array location and fall from the ycord 0 but the same xcord as the one that hit the supernova, also keeping the same interval id
 
 function recycleRandomImage(array){
-    ctx.clearRect(array.xcord, array.ycord, array.width, array.height)
+    clearImage(array)
     //check value
     console.log("recycleImage before", array)
     for(let i=0; i < 1; i++){
@@ -488,12 +488,14 @@ function detectShipCollision(name,type){
     if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
             //check value
             // console.log(name,type,"hit spaceship")
-        clearInterval(name.intervalId)
-        name.intervalId = ''
-        clearImage(name)
-            //check value
-            console.log("detectShipCollision", name, name.intervalId, type)
+        recycleRandomImage(name)
+        // clearInterval(name.intervalId)
+        // name.intervalId = ''
+        // clearImage(name)
+        //     //check value
+        //     console.log("detectShipCollision", name, name.intervalId, type)
         moveSpaceship(type)
+        
     }
 }
 
