@@ -14,14 +14,15 @@ const playerFuelSpan = document.createElement('span')
 const playerAstroidImg = document.createElement('img')
 const playerAstroidSpan = document.createElement('span')
 const ctx = canvas.getContext('2d')
+let gradientChangeValue = 0
 let imageHeight = 30
 let imageWidth = 30
 let astroidTracker = 0
 let fuelTracker = 0
 let leftMainHeight = leftMain.clientHeight//offsetHeight as opposed to clientHeight
 let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
-let bodyHeight = body.clientHeight
-let bodyWidth = body.clientWidth
+// let bodyHeight = body.clientHeight
+// let bodyWidth = body.clientWidth
 let spacePic = '24752-5-spaceship.png'
 let spaceAlt = 'spaceship'
 let astroidPic = 'astroid1.jpg'
@@ -45,9 +46,6 @@ let moveSuperNovaInterval = ''
 //this sets it once and keeps it at that size
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
-
-
-
 
     //check value
     // console.log("heightOfCanvas",leftMainHeight)
@@ -77,6 +75,7 @@ function getRandomInteger(min, max) {
 //==RESET PARTS OF SCREEN based on the type of event==//
 
 function reset(type){
+    removeEventListener('keypress',navigateSpaceship,false)
     ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
     if(type=='supernovaEvent'){
         for(let i = 0; i < imgArray.length; i++){
@@ -155,8 +154,28 @@ function loadSpaceshipImage(name){
 function createSuperNova(){
     supernovaY -= 1;
     ctx.fillRect(supernovaX,supernovaY,supernovaWidth,supernovaHeight);
+    gradientSuperNovaIncrement()
         //check value
         // console.log("movesupernova: ","supernovaY",supernovaY,"spaceshipY",spaceshipImage.ycord, "supernovaX",supernovaX ,  "supernovaWidth",supernovaWidth,"supernovaHeight",supernovaHeight);
+}
+
+//set gradient for supernova
+function gradientSuperNova(num){
+    gradientChangeValue = num
+    let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
+    gradient.addColorStop('0',"purple");
+    gradient.addColorStop('0.2',"orange");
+    gradient.addColorStop('0.5',"magenta");
+    gradient.addColorStop('0.7',"blue");
+    gradient.addColorStop('1.0',"green");
+    ctx.fillStyle = gradient;
+}
+
+function gradientSuperNovaIncrement(){
+    let num = 10
+    gradientChangeValue += num
+    console.log("changevalue", gradientChangeValue,"num", num, )
+    gradientSuperNova(gradientChangeValue)
 }
 
 //==ASTROIDS AND FUEL==//
@@ -317,7 +336,7 @@ function createRandomImage(num){
 function recycleRandomImage(array){
     clearImage(array)
     //check value
-    console.log("recycleImage before", array)
+    // console.log("recycleImage before", array)
     for(let i=0; i < 1; i++){
         if(getRandomInteger(0,1)==1){
             array.name = astroidImg.name + array.num
@@ -332,7 +351,7 @@ function recycleRandomImage(array){
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
-            console.log("recycleImage after",array)
+            // console.log("recycleImage after",array)
         } else {
             array.name = fuelImg.name + array.num
             array.src = fuelImg.src
@@ -346,7 +365,7 @@ function recycleRandomImage(array){
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
-            console.log("recycleImage after",array)
+            // console.log("recycleImage after",array)
         }
     }
 
@@ -388,24 +407,14 @@ function loadGame(){
     //set image location on the img array
     setImageLocations()
 
+    // set image intervals on the image array
     setImageIntervals()
 
     //== SUPERNOVA ==//
 
-    //changing the 50 value in the gradient will make the line appear to move ctx.createLinearGradient(0,50,150,0);
-    //this is the supernova gradient
-    let gradientChangeValue = 50
-
-    let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
-    gradient.addColorStop('0',"purple");
-    gradient.addColorStop('0.2',"orange");
-    gradient.addColorStop('0.5',"magenta");
-    gradient.addColorStop('0.7',"blue");
-    gradient.addColorStop('1.0',"green");
-    ctx.fillStyle = gradient;
-
     createSuperNova()
-    moveSuperNovaInterval = setInterval(moveSuperNova, 3000)
+    moveSuperNovaInterval = setInterval(moveSuperNova, 1000)
+    
 
 
 }
@@ -435,7 +444,7 @@ function navigateSpaceship(e){
 }
 
 // event listener to control the spaceship
-document.addEventListener('keydown', navigateSpaceship)
+document.addEventListener('keydown', navigateSpaceship,false)
 
 // moves spaceship based on rules for fuel / astroid collision
 function moveSpaceship(updown){
@@ -480,11 +489,6 @@ function detectShipCollision(name,type){
             //check value
             // console.log(name,type,"hit spaceship")
         recycleRandomImage(name)
-        // clearInterval(name.intervalId)
-        // name.intervalId = ''
-        // clearImage(name)
-        //     //check value
-        //     console.log("detectShipCollision", name, name.intervalId, type)
         moveSpaceship(type)
         
     }
@@ -548,7 +552,7 @@ function moveSuperNova(){
         reset('supernovaEvent')
         ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
         clearInterval(moveSuperNovaInterval)
-         
+                
     }
  
 
