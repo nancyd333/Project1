@@ -84,14 +84,14 @@ function navigateSpaceship(e){
     
     if (e.key == 'a'){
         ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-        spaceshipImage.xcord -= 5
+        spaceshipImage.xcord -= 20
             // check value
             // console.log('move ss left',"xcord",spaceshipImage.xcord, "ycord",spaceshipImage.ycord,"x", spaceshipImage.x, "y", spaceshipImage.y)
         ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
     }   
     if (e.key == 's'){
         ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-        spaceshipImage.xcord += 5
+        spaceshipImage.xcord += 20
             //check value
             // console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
         ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
@@ -108,19 +108,20 @@ function moveSpaceship(updown){
     rememberSpaceShipLocX = spaceshipImage.xcord
     rememberSpaceShipLocY = spaceshipImage.ycord
     
-    ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
+    ctx.clearRect(rememberSpaceShipLocX, rememberSpaceShipLocY, spaceshipImage.width, spaceshipImage.height)
         //check value
-        // console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
-    
-    if(updown = "fuel"){
-        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
+        console.log('clear spaceship',"xcord",spaceshipImage.xcord, "rem", rememberSpaceShipLocX, "ycord", spaceshipImage.ycord, "rem", rememberSpaceShipLocY)    
+    if(updown == "fuel"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-50,spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.ycord -= 50
             //check value  
-            // console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+            console.log("moveSpaceshipfuel","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
-    if (updown = "astroid"){
-        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-10,spaceshipImage.width, spaceshipImage.height)
+    if (updown == "astroid"){
+        ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+10,spaceshipImage.width, spaceshipImage.height)
+        spaceshipImage.ycord +=10
             //check value
-            // console.log("moveSpaceship","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
+            console.log("moveSpaceshipastroid","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
 }
 
@@ -137,8 +138,11 @@ function detectCollision(name,type){
     if ( (test1 && test2) || (test1 && test3) || (test1 && test4)){
             //check value
             // console.log(name,type,"hit spaceship")
-        clearInterval(name + 'Interval')
+        clearInterval(name.intervalId)
+        name.intervalId = ''
         clearImage(name)
+            //check value
+            console.log("detectCollision", name, name.intervalId, type)
         moveSpaceship(type)
     }
 }
@@ -149,7 +153,7 @@ function moveImage(name, type){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
     name.ycord += 5
         //check value
-        // console.log(name,'move',"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
+        //console.log("moveImage", name,"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
     ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
 
     detectCollision(name,type)
@@ -166,9 +170,9 @@ function createImageArray(num, name, src, width, height, xcord, ycord,alt, type)
     let numstart = 0
     if(!imgArray.length){
         numstart = 0
-    } else numstart=imgArray.length-1 
+    } else numstart=imgArray.length
 
-    for(let i=numstart; i<num; i++){
+    for(let i=numstart; i<num+numstart; i++){
         imgArray.push(new Image())
         imgArray[i].name = name  + i
         imgArray[i].src = src
@@ -180,9 +184,10 @@ function createImageArray(num, name, src, width, height, xcord, ycord,alt, type)
         imgArray[i].display = "none"
         imgArray[i].id = name + i
         imgArray[i].type = type
+        imgArray[i].intervalId = ''
 
         //check value
-        console.log("createImageArray", imgArray[i].name, imgArray[i].src, imgArray[i].width,imgArray[i].height,imgArray[i].xcord,imgArray[i].ycord,imgArray[i].alt,imgArray[i].display,imgArray[i].id )
+        console.log("createImageArray", imgArray[i].name, imgArray[i].src, imgArray[i].width,imgArray[i].height,imgArray[i].xcord,imgArray[i].ycord,imgArray[i].alt,imgArray[i].display,imgArray[i].id ,imgArray[i].intervalId,"numstart",numstart)
 
     }
 
@@ -192,7 +197,7 @@ function createImageArray(num, name, src, width, height, xcord, ycord,alt, type)
 // create fuel images 
 createImageArray(3,'fuelImage',fuelPic,30,30,0,0,fuelAlt,'fuel')
 // create astroid images
-createImageArray(6,'fuelImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
+createImageArray(6,'astroidImage',astroidPic,30,30,0,0,astroidAlt,'astroid')
 
 //get the positions for the current screen and use to determine the location of the images
 //need all images added to array before this can be calcualted
@@ -213,7 +218,7 @@ function populateImgLocationsArray(){
 
 populateImgLocationsArray()
 
-
+//this is so the images don't populate in the same location every time
 function swapImageLocations(loc1, loc2){
     val1 = imgArray[loc1].xcord
     val2 = imgArray[loc2].xcord
@@ -243,11 +248,15 @@ rand2 = Math.floor(Math.random() * imgLocations.length)
 swapImageLocations(rand1,rand2)
 swapImageLocations(rand1,rand2)
 
+
+//this creates the intervals for the astroid and fuel and saves the id on the array for later use
 function setImageIntervals(){
     let interval = 500
     for(let i = 0; i < imgArray.length; i++){
-        intervalList[i] = setInterval(()=>{moveImage(imgArray[i],imgArray[i].type)},interval)
-        interval += 500
+        imgArray[i].intervalId = setInterval(()=>{moveImage(imgArray[i],imgArray[i].type)},interval)
+            //check value
+            //console.log("setImageInterval",imgArray[i])
+        interval += 1000
     }
 }
 
@@ -293,6 +302,7 @@ function moveSuperNova(){
         clearInterval(moveSuperNovaInterval)
          
     }
+ 
 
 }
 
@@ -300,7 +310,7 @@ function reset(type){
     if(type=='supernovaEvent'){
         for(let i = 0; i < imgArray.length; i++){
             clearImage(imgArray[i])
-            clearInterval(intervalList[i])
+            clearInterval(imgArray[i].intervalId)
         }
 
     }
@@ -308,6 +318,8 @@ function reset(type){
 
 
 const moveSuperNovaInterval = setInterval(moveSuperNova, 800)
+
+
 
 
 
