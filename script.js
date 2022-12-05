@@ -6,6 +6,7 @@ const leftMain = document.getElementById('left-main')
 const resetButton = document.getElementById('resetButton')
 const spaceshipImage = document.createElement('img')
 const userMessage = document.getElementById('user-message')
+const userMessage2 = document.getElementById('user-message2')
 const playerOneDiv = document.getElementById('player-one')
 const fuelMessage = document.getElementById('fuel')
 const astroidMessage = document.getElementById('astroid')
@@ -14,6 +15,7 @@ const playerFuelSpan = document.createElement('span')
 const playerAstroidImg = document.createElement('img')
 const playerAstroidSpan = document.createElement('span')
 const ctx = canvas.getContext('2d')
+let gradientTrackNum = 0
 let gradientChangeValue = 0
 let imageHeight = 30
 let imageWidth = 30
@@ -81,6 +83,8 @@ function reset(type){
         for(let i = 0; i < imgArray.length; i++){
             clearImage(imgArray[i])
             clearInterval(imgArray[i].intervalId)
+            clearImage(spaceshipImage)
+            userMessage2.innerText = ''
         }
 
     } else if (type=='resetGame'){
@@ -106,11 +110,17 @@ function reset(type){
         clearInterval(moveSuperNovaInterval)
         ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight);
         userMessage.innerText = ''
+        userMessage2.innerText = ''
         loadGame()
     } else if (type =='winGame'){
         for(let i = 0; i < imgArray.length; i++){
-            clearImage(imgArray[i])
-            clearInterval(imgArray[i].intervalId)
+            for(let i = 0; i < imgArray.length; i++){
+                clearImage(imgArray[i])
+                clearInterval(imgArray[i].intervalId)
+                clearImage(spaceshipImage)
+                userMessage2.innerText = ''
+            }
+            
          }
      }
 }
@@ -162,19 +172,40 @@ function createSuperNova(){
 //set gradient for supernova
 function gradientSuperNova(num){
     gradientChangeValue = num
-    let gradient = ctx.createLinearGradient(0,gradientChangeValue,150,0);
-    gradient.addColorStop('0',"purple");
+    let gradient = ctx.createLinearGradient(0,gradientChangeValue,400,0); //150,0
+    gradient.addColorStop('0', '#fee440');
     gradient.addColorStop('0.2',"orange");
-    gradient.addColorStop('0.5',"magenta");
-    gradient.addColorStop('0.7',"blue");
-    gradient.addColorStop('1.0',"green");
+    gradient.addColorStop('0.5',"red");
+    gradient.addColorStop('0.7',"magenta"); 
+    gradient.addColorStop('1.0',"#390099"); 
     ctx.fillStyle = gradient;
 }
 
+//set gradient movement in the supernova
 function gradientSuperNovaIncrement(){
-    let num = 10
-    gradientChangeValue += num
-    console.log("changevalue", gradientChangeValue,"num", num, )
+    
+    //-- this code will continue to move the gradient in one direction
+    // let inc = 10
+    // gradientChangeValue += inc
+    // gradientSuperNova(gradientChangeValue)
+    
+    //-- this code moves the gradient back and forth across the screen
+    let inc = 20
+    let max = 400
+    if (gradientChangeValue == max){
+        gradientTrackNum = max
+    }
+    if (gradientChangeValue == 0){
+        gradientTrackNum = 0
+    }
+    if(gradientTrackNum == max){
+        gradientChangeValue -= inc
+    }
+    if(gradientTrackNum == 0){
+        gradientChangeValue += inc
+    }
+    
+    console.log("changevalue", gradientChangeValue,"num", gradientTrackNum, )
     gradientSuperNova(gradientChangeValue)
 }
 
@@ -379,6 +410,10 @@ function loadGame(){
     //create objects for fuel and astroid
     // createBaseFuelObject()
     // createBaseAstroidObject()
+    userMessage.style.fontSize = 'medium'
+    userMessage.innerText = `Escape the supernova`
+    userMessage2.style.fontSize = 'small'
+    userMessage2.innerText = `Your spaceship is caught near a supernova is running out of fuel.${'\n'} Collect fuel to reach the screen top and escape, before the supernova expands and consumes you.${'\n'} Watch out, the astroids knock you back.${'\n'} Pressing 'a' to move left and 's' to move right.`
 
     //populate Player 1 messages
     createPlayerFuelMessage()
@@ -494,19 +529,43 @@ function detectShipCollision(name,type){
     }
 }
 
+
+// function winScreen(){
+//     ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight)
+//     for (let i = 0; i < 6; i++) {
+//         for (let j = 0; j < 6; j++) {
+//           ctx.fillStyle = `rgb(255,255,255,1)`;
+//           ctx.lineWidth = 5;
+//           ctx.beginPath();
+//           ctx.moveTo(0,0);
+//           ctx.lineTo(200,200);
+//           ctx.stroke();
+//         }
+//       }
+// }
+
 //spaceship reaches top of screen
 //win condition detected
 function detectShipWinCollision(){
     let test1 = spaceshipImage.ycord
     if(test1 <= 0){
         //change user message to win
-        userMessage.innerText = 'You were able to escape! Congratulations!'
+        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`
         //remove astroid/fuel images
+        clearInterval(moveSuperNovaInterval)
+        clearInterval(moveSpaceship)
         reset('winGame')
+
+        // winScreen()
         //change gameboard color to blue
         ctx.fillStyle = "blue";
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.raio, 0, 2 * Math.PI);
+        ctx.fill();
         ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
-        clearInterval(moveSuperNovaInterval)
+
+        
+        
     }
         
         
@@ -548,7 +607,7 @@ function moveSuperNova(){
         console.log("supernova hit spaceship")
         
         //cover the screen with the supernova, clear all other images
-        userMessage.innerText = 'You were unable to escape. Game over 🥲'
+        userMessage.innerText = `You were unable to escape the supernova ${'\n'} Game over`
         reset('supernovaEvent')
         ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
         clearInterval(moveSuperNovaInterval)

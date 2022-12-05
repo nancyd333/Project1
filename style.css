@@ -11,7 +11,7 @@ body{
     height: 100vh;
     width: 100vw;
     grid-template-columns: 10% 90%; /*150px 5fr*/
-    grid-template-rows: 10% 90%; /*100px 2fr*/
+    grid-template-rows: 18% 82%; /*100px 2fr*/
     grid-template-areas: "left-top middle-top"
                          "left-aside left-main"
 }
@@ -52,6 +52,16 @@ body{
 
 }
 #user-message{
+    /* background-color: purple; */
+    padding-top: 5px;
+    font-weight: bold;
+    margin: 0px;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+}
+
+#user-message2{
     /* background-color: purple; */
     padding-top: 5px;
     margin: 0px;
