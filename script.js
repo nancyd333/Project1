@@ -117,6 +117,8 @@ function reset(type){
             for(let i = 0; i < imgArray.length; i++){
                 clearImage(imgArray[i])
                 clearInterval(imgArray[i].intervalId)
+                clearInterval(moveSuperNovaInterval)
+                ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight);
                 clearImage(spaceshipImage)
                 userMessage2.innerText = ''
             }
@@ -530,20 +532,6 @@ function detectShipCollision(name,type){
 }
 
 
-// function winScreen(){
-//     ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight)
-//     for (let i = 0; i < 6; i++) {
-//         for (let j = 0; j < 6; j++) {
-//           ctx.fillStyle = `rgb(255,255,255,1)`;
-//           ctx.lineWidth = 5;
-//           ctx.beginPath();
-//           ctx.moveTo(0,0);
-//           ctx.lineTo(200,200);
-//           ctx.stroke();
-//         }
-//       }
-// }
-
 //spaceship reaches top of screen
 //win condition detected
 function detectShipWinCollision(){
@@ -556,18 +544,10 @@ function detectShipWinCollision(){
         clearInterval(moveSpaceship)
         reset('winGame')
 
-        // winScreen()
         //change gameboard color to blue
-        ctx.fillStyle = "blue";
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, e.raio, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);
-
-        
+        // ctx.fillStyle = "blue";
         
     }
-        
         
 }
 

@@ -17,11 +17,14 @@ body{
 }
 
 
+
 #left-top{
     grid-area: left-top;
     border-right-color: white;
     border-right-width: 1px;
     border-right-style: solid;
+    background-color: black;
+    position: relative;
     /* background-color: aqua; */
 }
 
@@ -42,6 +45,7 @@ body{
     border-right-color: white;
     border-right-width: 1px;
     border-right-style: solid;
+    background-color: black;
     /* background-color: magenta; */
 }
 
@@ -69,22 +73,31 @@ body{
     font-size: 24px;
     text-align: center;
 }
+
+#buttonDiv{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .button{
-    background-color: #6096ba;
+    background-color: black;
     color: white;
-    border-radius: 5px;
+    /* border-radius: 5px; */
     border: 1px solid #6096ba;
     font-size: 16px;
 }
 #resetButton{
-    margin-top: 10%;
-    margin-left: 10%;
+    /* margin-top: 10%; */
+    /* margin-left: 10%; */
     font-size: 12px;
-    padding: 5px;
+    padding: 7px 15px;
 }
 
 #player-one{
     padding: 5px;
+
 }
 
 #fuel{
@@ -103,4 +116,34 @@ body{
 #astroidSpan{
     margin: 2px;
 
+}
+
+
+/* twinkling sky from https://github.com/Carla-Codes/starry-night-css-animation/blob/master/index.html*/
+@keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+
+.stars, .twinkling {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  display:block;
+} 
+
+
+.stars {
+  background: black url(stars.png) repeat top center ;
+  z-index:0;
+}
+
+.twinkling{
+  background: transparent url(twinkling.png) repeat top center ;
+  z-index:1;
+  animation:move-twink-back 150s linear infinite;
 }
