@@ -14,6 +14,7 @@ const playerFuelImg = document.createElement('img')
 const playerFuelSpan = document.createElement('span')
 const playerAstroidImg = document.createElement('img')
 const playerAstroidSpan = document.createElement('span')
+const middleTopDiv = document.getElementById('middleTopDiv')
 const ctx = canvas.getContext('2d')
 let gradientTrackNum = 0
 let gradientChangeValue = 0
@@ -35,6 +36,13 @@ let imgArray = []
 let imgLocations = []
 let intervalList = []
 
+//set rate at which astroids and fuel drop from the sky
+let minImgIntervalRate = 10
+let maxImgIntervalRate = 150
+
+//set rate for supernova interval
+superNovaIntervalRate = 200
+
 
 //note: supernovaInterval of 0 is the top of the screen
 let supernovaY = leftMainHeight;
@@ -48,6 +56,9 @@ let moveSuperNovaInterval = ''
 //this sets it once and keeps it at that size
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
+
+
+
 
     //check value
     // console.log("heightOfCanvas",leftMainHeight)
@@ -185,12 +196,7 @@ function gradientSuperNova(num){
 
 //set gradient movement in the supernova
 function gradientSuperNovaIncrement(){
-    
-    //-- this code will continue to move the gradient in one direction
-    // let inc = 10
-    // gradientChangeValue += inc
-    // gradientSuperNova(gradientChangeValue)
-    
+      
     //-- this code moves the gradient back and forth across the screen
     let inc = 20
     let max = 400
@@ -320,7 +326,7 @@ function setImageLocations(){
 function setImageIntervals(){
     let interval = 0
     for(let i = 0; i < imgArray.length; i++){
-        interval = getRandomInteger(200,1000)
+        interval = getRandomInteger(minImgIntervalRate,maxImgIntervalRate)
         imgArray[i].intervalId = setInterval(()=>{moveImage(imgArray[i],imgArray[i].type)},interval)
             //check value
             //console.log("setImageInterval",imgArray[i])
@@ -380,7 +386,7 @@ function recycleRandomImage(array){
             array.alt = astroidImg.alt
             array.type = astroidImg.type
             clearInterval(array.intervalId)
-            interval = getRandomInteger(200,1000)
+            interval = getRandomInteger(minImgIntervalRate,maxImgIntervalRate)
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
@@ -394,7 +400,7 @@ function recycleRandomImage(array){
             array.alt = fuelImg.alt
             array.type = fuelImg.type
             clearInterval(array.intervalId)
-            interval = getRandomInteger(200,1000)
+            interval = getRandomInteger(minImgIntervalRate,maxImgIntervalRate)
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
@@ -412,10 +418,10 @@ function loadGame(){
     //create objects for fuel and astroid
     // createBaseFuelObject()
     // createBaseAstroidObject()
-    userMessage.style.fontSize = 'medium'
     userMessage.innerText = `Escape the supernova`
+    userMessage.style.color = "red"
     userMessage2.style.fontSize = 'small'
-    userMessage2.innerText = `Your spaceship is caught near a supernova is running out of fuel.${'\n'} Collect fuel to reach the screen top and escape, before the supernova expands and consumes you.${'\n'} Watch out, the astroids knock you back.${'\n'} Pressing 'a' to move left and 's' to move right.`
+    userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
 
     //populate Player 1 messages
     createPlayerFuelMessage()
@@ -450,7 +456,7 @@ function loadGame(){
     //== SUPERNOVA ==//
 
     createSuperNova()
-    moveSuperNovaInterval = setInterval(moveSuperNova, 1000)
+    moveSuperNovaInterval = setInterval(moveSuperNova, superNovaIntervalRate)
     
 
 
@@ -538,14 +544,11 @@ function detectShipWinCollision(){
     let test1 = spaceshipImage.ycord
     if(test1 <= 0){
         //change user message to win
-        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`
+        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
         //remove astroid/fuel images
         clearInterval(moveSuperNovaInterval)
         clearInterval(moveSpaceship)
         reset('winGame')
-
-        //change gameboard color to blue
-        // ctx.fillStyle = "blue";
         
     }
         
@@ -587,6 +590,7 @@ function moveSuperNova(){
         console.log("supernova hit spaceship")
         
         //cover the screen with the supernova, clear all other images
+        userMessage.style.color = 'magenta'
         userMessage.innerText = `You were unable to escape the supernova ${'\n'} Game over`
         reset('supernovaEvent')
         ctx.fillRect(supernovaX,0,supernovaWidth,supernovaHeight);

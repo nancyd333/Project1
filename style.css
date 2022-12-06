@@ -1,3 +1,7 @@
+/* html, body{
+    overflow: hidden;
+} */
+
 body{
     background-color: black;
     font-family: 'Handlee', cursive;
@@ -30,6 +34,7 @@ body{
 
 #middle-top{
     grid-area: middle-top;
+    position: relative;
 
     /* background-color: aqua; */
 }
@@ -62,7 +67,7 @@ body{
     margin: 0px;
     color: white;
     font-size: 24px;
-    text-align: center;
+
 }
 
 #user-message2{
@@ -71,7 +76,7 @@ body{
     margin: 0px;
     color: white;
     font-size: 24px;
-    text-align: center;
+  
 }
 
 #buttonDiv{
@@ -84,14 +89,12 @@ body{
 .button{
     background-color: black;
     color: white;
-    /* border-radius: 5px; */
     border: 1px solid #6096ba;
     font-size: 16px;
 }
 #resetButton{
-    /* margin-top: 10%; */
-    /* margin-left: 10%; */
     font-size: 12px;
+    border: 1px solid #6096ba;
     padding: 7px 15px;
 }
 
@@ -116,6 +119,11 @@ body{
 #astroidSpan{
     margin: 2px;
 
+}
+
+#middleTopDiv{
+position: absolute;
+padding-left: 1%;
 }
 
 
