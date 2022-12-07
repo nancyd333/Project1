@@ -1,6 +1,6 @@
-/* html, body{
+html, body{
     overflow: hidden;
-} */
+}
 
 body{
     background-color: black;
@@ -22,24 +22,21 @@ body{
 
 
 
-#left-top{
+#leftTop{
     grid-area: left-top;
     border-right-color: white;
     border-right-width: 1px;
     border-right-style: solid;
     background-color: black;
     position: relative;
-    /* background-color: aqua; */
 }
 
-#middle-top{
+#middleTop{
     grid-area: middle-top;
     position: relative;
-
-    /* background-color: aqua; */
 }
 
-#left-aside{
+#leftAside{
     grid-area: left-aside;
     color: white;
     text-align: center;
@@ -51,32 +48,27 @@ body{
     border-right-width: 1px;
     border-right-style: solid;
     background-color: black;
-    /* background-color: magenta; */
 }
 
-#left-main{
+#leftMain{
     grid-area: left-main;
-    /* background-color: yellow; */
-
-
 }
-#user-message{
+
+#userMessage{
     /* background-color: purple; */
     padding-top: 5px;
     font-weight: bold;
     margin: 0px;
     color: white;
     font-size: 24px;
-
 }
 
-#user-message2{
+#userMessage2{
     /* background-color: purple; */
     padding-top: 5px;
     margin: 0px;
     color: white;
-    font-size: 24px;
-  
+    font-size: 24px; 
 }
 
 #buttonDiv{
@@ -92,13 +84,14 @@ body{
     border: 1px solid #6096ba;
     font-size: 16px;
 }
+
 #resetButton{
     font-size: 12px;
     border: 1px solid #6096ba;
     padding: 7px 15px;
 }
 
-#player-one{
+#playerOne{
     padding: 5px;
 
 }
@@ -112,11 +105,11 @@ body{
     text-align: center;
 }
 
-#fuelSpan{
+#incSpan{
     margin: 5px;
 }
 
-#astroidSpan{
+#decSpan{
     margin: 2px;
 
 }
@@ -146,12 +139,12 @@ padding-left: 1%;
 
 
 .stars {
-  background: black url(stars.png) repeat top center ;
+  background: black url(./stars.png) repeat top center ;
   z-index:0;
 }
 
 .twinkling{
-  background: transparent url(twinkling.png) repeat top center ;
+  background: transparent url(./twinkling.png) repeat top center ;
   z-index:1;
   animation:move-twink-back 150s linear infinite;
 }

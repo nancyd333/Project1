@@ -2,12 +2,12 @@
 
 const canvas = document.querySelector('canvas')
 const body = document.querySelector('html')
-const leftMain = document.getElementById('left-main')
+const leftMain = document.getElementById('leftMain')
 const resetButton = document.getElementById('resetButton')
 const playerImgElement = document.createElement('img')
-const userMessage = document.getElementById('user-message')
-const userMessage2 = document.getElementById('user-message2')
-const playerOneDiv = document.getElementById('player-one')
+const userMessage = document.getElementById('userMessage')
+const userMessage2 = document.getElementById('userMessage2')
+const playerOneDiv = document.getElementById('playerOne')
 const playerIncHitId = document.getElementById('playerIncHitId')
 const playerDecHitId = document.getElementById('playerDecHitId')
 const playerMenuIncHitImgElement = document.createElement('img')
@@ -18,24 +18,46 @@ const middleTopDiv = document.getElementById('middleTopDiv')
 const ctx = canvas.getContext('2d')
 let leftMainHeight = leftMain.clientHeight//offsetHeight as opposed to clientHeight
 let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
-// let imageHeight = 30
-// let imageWidth = 30
-let gameStatus = 0 // gameStatus 1 is in-play and 0 is not in-play
-// let bodyHeight = body.clientHeight
-// let bodyWidth = body.clientWidth
-
-// let decHitItemPic = 
-// let incHitItemPic = 'sun.jpeg'
+let gameStatus = 0 // gameStatus 1 is in-play ; and 0 is not in-play
 let imgArray = []
 let imgLocations = []
 let intervalList = []
 
-//need to fix this to use class
-let minImgIntervalRate = 10 //set rate at which astroids and fuel drop from the sky
-let maxImgIntervalRate = 150 //set rate at which astroids and fuel drop from the sky
+
+let minImgIntervalRate = 10 //min rate incHit/decHit image falls from the sky, min number for random setting
+let maxImgIntervalRate = 150 //max rate incHit/decHit image falls from the sky, min number for random setting
+
+//== MULTI-PURPOSE functions ==//
+ 
+//use this to clear image 
+function clearImage(name){
+    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
+
+}
+
+// use this to draw image
+function drawImage(name){
+    ctx.drawImage(name,name.xcord, name.ycord, name.width, name.height)
+
+}
+
+// use this to draw a rectangle
+function fillRect(name){
+ ctx.fillRect(name.xcord,name.ycord,name.width,name.height);
+
+}
 
 
-// class to create the event that is impeding doom on the player
+//give two numbers and get a random integer between those two numbers (inclusive of the numbers given)
+//min 0, max 10 will give random number between 0 and 10 (inclusive)
+function getRandomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+  }
+
+
+//==CREATE objects==//
+
+// class to create the event that will cause the lose condition for the player
 class EventItem{
     constructor(){
         this.xcord = 0;
@@ -68,27 +90,27 @@ const event1 = new EventItem()
 
 // class to create objects that increment and decrement the player
 class HitItem{
-    constructor(name,src,width, height,xcord,ycord,type,intervalId, imgLocId){
-        this.name = name;
+    constructor(name,src,width, height,xcord,ycord,type){
+        this.name = name; // descriptive name for the incHit / decHit item, this will appear on screen
         this.src = src;
         this.width = width;
         this.height = height;
         this.xcord = xcord;
         this.ycord = ycord;
-        this.type = type.toLowerCase();
-        this.displayName = type.charAt(0).toUpperCase() + type.slice(1) 
-        this.alt = type.toLowerCase();
-        this.intervalId = intervalId;
-        this.imgLocId = imgLocId;
-        this.counter = 0
+        this.type = type.toLowerCase(); // must be set to either 'inc' or 'dec' used in setImageIntervals and effects all other gameplay
+        this.displayName = name.charAt(0).toUpperCase() + name.slice(1) ;
+        this.alt = name.toLowerCase();
+        this.intervalId = '';
+        this.imgLocId = '';
+        this.counter = 0;
     }
 
 }
 
-const incHitItem = new HitItem('fuelImage', 'sun.jpeg', 30, 30, 0,0, 'fuel','','')
-const decHitItem = new HitItem('astroidImage', 'astroid1.jpg', 30, 30, 0,0, 'astroid','','')
+const incHitItem = new HitItem('fuel', 'sun.jpeg', 30, 30, 0,0, 'inc')
+const decHitItem = new HitItem('astroid', 'astroid1.jpg', 30, 30, 0,0, 'dec')
 
-// class to create players
+// class to create player
 class Player{
     constructor(name,description,src){
         this.name = name;
@@ -108,15 +130,7 @@ class Player{
 
 const player1 = new Player('spaceship', 'spaceship', '24752-5-spaceship.png')
 
-// let spaceshipHeight = 100
-// let spaceshipWidth = 60
-// let spaceshipLeftRightSpeed = 50
-// let spaceshipHitMoveUpNo = 50 
-// let spaceshipHitMoveDownNo = 10
-// let spaceAlt = 'spaceship'
-// let spacePic = '24752-5-spaceship.png'
-
-
+// creates the player IMG 
 function createPlayerImage(name, player)  {
     name.src= player.src
     name.width = player.width
@@ -128,160 +142,55 @@ function createPlayerImage(name, player)  {
 
 
 //set canvas to the height / width of the div that contains it
-//canvas size is sets once and keeps it at that size
+//canvas size is set once and keeps it at that size
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
 
 
 
-
-    //check value
-    // console.log("heightOfCanvas",leftMainHeight)
-    // console.log("widthOfCanvas", leftMainWidth)
-    // console.log("widthOfBody", bodyWidth)
-    // console.log("heightOfBody", bodyHeight)
-    // console.log(ctx)
-    // console.log(leftMain.clientWidth)
-    // console.log(leftMain.clientHeight)
-
-
-//== MULTI-PURPOSE FUNCTIONS ==//
- 
-//==CLEAR IMAGE from screen==/
-
-//use this to clear image 
-function clearImage(name){
-    ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
-
-}
-
-// use this to draw image
-function drawImage(name){
-    ctx.drawImage(name,name.xcord, name.ycord, name.width, name.height)
-
-}
-
-// use this to fill rectangle? not being used yet
-// need to write code here
-function fillRect(name){
- ctx.fillRect(name.xcord,name.ycord,name.width,name.height);
-
-}
-
-
-//give two numbers and get random integer between those two numbers (inclusive of the numbers given)
-//min 0, max 10 will give random number between 0 and 10
-function getRandomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
-  }
-
-//==RESET PARTS OF SCREEN based on the type of event==//
-
-function reset(type){
-    // need to remove event listener
-    // removeEventListener('keypress',navigateSpaceship,false)
-    gameStatus = 0
-    // ctx.clearRect(spaceshipImage.xcord, spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
-    clearImage(playerImgElement)
-
-    if(type=='eventWin'){
-        for(let i = 0; i < imgArray.length; i++){
-            clearImage(imgArray[i])
-            clearInterval(imgArray[i].intervalId)
-        }
-        clearImage(playerImgElement)
-        userMessage2.innerText = ''
-        ctx.fillRect(event1.xcord,0,event1.width,event1.height) //this makes the event cover the screen
-    } else if (type=='resetGame'){
-        for(let i = 0; i < imgArray.length; i++){
-            clearImage(imgArray[i])
-            clearInterval(imgArray[i].intervalId)
-            //checkvalue
-            //console.log('resetGame',imgArray)
-        }
-        ctx.clearRect(0,0, event1.width, event1.height)
-        clearInterval(event1.intervalId)
-        event1.resetEvent()
-        imgArray = []
-        imgLocations =[]
-        intervalList=[]
-        leftMainHeight = leftMain.clientHeight
-        leftMainWidth = leftMain.clientWidth
-        bodyHeight = body.clientHeight //is this used?
-        bodyWidth = body.clientWidth // is this used?
-        incHitItem.counter = 0
-        decHitItem.counter = 0      
-        userMessage.innerText = ''
-        userMessage2.innerText = ''
-        loadGame()
-    } else if (type =='playerWin'){
-        for(let i = 0; i < imgArray.length; i++){
-            clearImage(imgArray[i])
-            clearInterval(imgArray[i].intervalId)
-        }   
-        ctx.clearRect(0, 0, event1.width, event1.height)
-        clearInterval(event1.intervalId)
-        event1.resetEvent()
-        clearImage(playerImgElement)
-        userMessage2.innerText = ''
-    }
-}
-
-//used by button to reset game
-function onResetClick(){
-    reset('resetGame')
-    
-    //check value
-    //console.log('reset clicked')
-
-}
-
-
-
-//load spaceship image
+//load player image
 function loadPlayerImage(name){
     //generate image on page
     name.onload = function(){
-        // drawImage(name) 
-        ctx.drawImage(name, name.xcord,name.ycord,name.width,name.height)
+        drawImage(name) 
         //check value
-        console.log(name,"drawImgValues","x",name.xcord,"y",name.ycord,"width",name.width,"height",name.height)
+        // console.log(name,"drawImgValues","x",name.xcord,"y",name.ycord,"width",name.width,"height",name.height)
     }
 }
 
 
-//==SUPERNOVA==//
+//--event--//
 
-//creates the supernova drawing
-function startEvent(){
-    event1.ycord -= 1;
-    fillRect(event1)
-    gradientEventIncrement(event1)
-        //check value
-        // console.log("movesupernova: ","supernovaY",supernovaY,"spaceshipY",spaceshipImage.ycord, "supernovaX",supernovaX ,  "supernovaWidth",supernovaWidth,"supernovaHeight",supernovaHeight);
+//creates the event drawing
+function startEvent(name){
+    name.ycord = name.ycord - 1;
+    // console.log("start event", "event", name, "ycord",name.ycord)
+    fillRect(name)
+    gradientEventIncrement(name)
 }
 
-//set gradient for supernova
+//set gradient for event
 function gradientEvent(name){
-    let gradient = ctx.createLinearGradient(0,name.gradientChangeValue,400,0); //150,0
+    let gradient = ctx.createLinearGradient(0,name.gradientChangeValue,400,0);
+    // console.log("gradient change value", name.gradientChangeValue)
     gradient.addColorStop('0', '#fee440');
-    gradient.addColorStop('0.2',"orange");
-    gradient.addColorStop('0.5',"red");
-    gradient.addColorStop('0.7',"magenta"); 
-    gradient.addColorStop('1.0',"#390099"); 
+    gradient.addColorStop('0.2','orange');
+    gradient.addColorStop('0.5','red');
+    gradient.addColorStop('0.7','magenta'); 
+    gradient.addColorStop('1.0','#390099'); 
     ctx.fillStyle = gradient;
 }
 
-//set gradient movement in the supernova
+//set gradient movement in the event
 function gradientEventIncrement(name){
       
     //-- this code moves the gradient back and forth across the screen
-    let inc = name.gradientIncNo
-    let max = name.gradientEndNo
-    if (name.gradientChangeValue == max){
+    let inc = name.gradientIncNo //amount to increment/decrement by
+    let max = name.gradientEndNo 
+    if (name.gradientChangeValue >= max){
         name.gradientTrackNum = max
     }
-    if (name.gradientChangeValue == 0){
+    if (name.gradientChangeValue <= 0){
         name.gradientTrackNum = 0
     }
     if(name.gradientTrackNum == max){
@@ -290,21 +199,18 @@ function gradientEventIncrement(name){
     if(name.gradientTrackNum == 0){
         name.gradientChangeValue += inc
     }
-    
-    // console.log("changevalue", gradientChangeValue,"num", gradientTrackNum, )
+    // check value
+    // console.log("gradientchangevalue", name.gradientChangeValue,"track no", name.gradientTrackNum,"gradientIncrease", inc, "gradient max", name.gradientEndNo )
     gradientEvent(name)
 }
 
-//==ASTROIDS AND FUEL==//
+//--incHit and decHit--//
 
 
-//image array to track images
-//this is only called on set up
-//numstart allows for loading of fuel and then astroid
-//num is the number of items you want to create in the array
+//array created to track incHit and decHit images
 function createImageArray(name, src, width, height, xcord, ycord,alt, type){
-    // let pixelCounter = 0
     let numstart = 0
+    // if the array has been created then numstart is the length of the array, otherwise it's set to 0
     if(!imgArray.length){
         numstart = 0
     } else numstart=imgArray.length
@@ -320,7 +226,7 @@ function createImageArray(name, src, width, height, xcord, ycord,alt, type){
         imgArray[i].alt = alt
         imgArray[i].type = type
         imgArray[i].intervalId = ''
-        imgArray[i].imgLocId = '' //this is the screen "column", the x coordinate that the image will always fall from
+        imgArray[i].imgLocId = '' //this is the screen x coordinate, which essentially set the column the image will fall dowm from on the screen for that game 
         imgArray[i].num = i
 
         //check value
@@ -330,7 +236,7 @@ function createImageArray(name, src, width, height, xcord, ycord,alt, type){
 
 }
 
-//get the positions for the current browser screen and use to determine the location of the images
+//get the positions for the current browser screen and use to determine the location of the incHit / decHit images
 //need all images added to array before this can be calcualted
 function populateImgLocationsArray(){
     let counter = 0
@@ -347,18 +253,16 @@ function populateImgLocationsArray(){
     
 }
 
-//set image location to the images array
+//set image location in incHit/decHit array from the randomly generated location array
 function setImageLocations(){
     for(let i = 0; i < imgArray.length; i++){
         imgArray[i].xcord = imgLocations[i]
         imgArray[i].imgLocId = imgLocations[i]
     }
-        //check value
-        // console.log('check xcord assignment')    
 
 }
 
-//creates the intervals for the astroid and fuel and saves the interval id for later use
+//creates the intervals for each decHit/incHit, the interval is set randomly for each item in the array, the interval id is saved for later use
 function setImageIntervals(){
     let interval = 0
     for(let i = 0; i < imgArray.length; i++){
@@ -370,7 +274,7 @@ function setImageIntervals(){
     }
 }
 
-//create the Player 1 section for Fuel with image
+//create the incHit image, name, counter where Player 1 section is located
 function createPlayerMenuIncHitMessage(){
     playerMenuIncHitImgElement.src = incHitItem.src
     playerMenuIncHitImgElement.alt = incHitItem.alt
@@ -382,7 +286,7 @@ function createPlayerMenuIncHitMessage(){
     playerMenuIncHitSpanElement.innerText = `${incHitItem.displayName}: ${incHitItem.counter}`
 }
 
-//create the Player 1 section for Astroid with image
+//create the decHit image, name, counter where Player 1 section is located
 function createPlayerMenuDecHitMessage(){
     playerMenuDecHitImgElement.src = decHitItem.src
     playerMenuDecHitImgElement.alt = decHitItem.alt
@@ -394,9 +298,9 @@ function createPlayerMenuDecHitMessage(){
     playerMenuDecHitSpanElement.innerText = `${decHitItem.displayName}: ${decHitItem.counter}`
 }
 
-//creates a astroid or fuel image, chosen at random
+//creates a incHit or decHit image, chosen at random
 //num is the number of total images you want to create
-//assumes screen position will be assigned at this step, such as on game load
+//assumes load game function has run and the locations have been set on the incHit/decHit array, this function will swap out the images randomly in the array which causes an image to appear in the set location at random
 function createRandomHitImage(num, hitItem1, hitItem2){
     for(let i=0; i < num; i++){
         if(getRandomInteger(0,1)==1){
@@ -407,7 +311,65 @@ function createRandomHitImage(num, hitItem1, hitItem2){
     }
 }
 
-//once astroid/fuel hits supernova a random fuel/astroid needs to be added to that array location and fall from the ycord 0 but the same xcord as the one that hit the supernova
+//==RESET parts of screen based on the type of event==//
+
+function reset(type){
+    
+    gameStatus = 0 // changes the game status to be NOT in-play
+    clearImage(playerImgElement)
+
+    if(type=='eventWin'){ // the event will cover the screen and all other images will be removed
+        for(let i = 0; i < imgArray.length; i++){
+            clearImage(imgArray[i])
+            clearInterval(imgArray[i].intervalId)
+        }
+        clearImage(playerImgElement)
+        userMessage2.innerText = ''
+        ctx.fillRect(event1.xcord,0,event1.width,event1.height) //this makes the event cover the screen
+    } else if (type=='resetGame'){ // screen will return to start stettings
+        for(let i = 0; i < imgArray.length; i++){
+            clearImage(imgArray[i])
+            clearInterval(imgArray[i].intervalId)
+            //checkvalue
+            //console.log('resetGame',imgArray)
+        }
+        ctx.clearRect(0,0, event1.width, event1.height)
+        clearInterval(event1.intervalId)
+        event1.resetEvent()
+        imgArray = []
+        imgLocations =[]
+        intervalList=[]
+        leftMainHeight = leftMain.clientHeight
+        leftMainWidth = leftMain.clientWidth
+        incHitItem.counter = 0
+        decHitItem.counter = 0      
+        userMessage.innerText = ''
+        userMessage2.innerText = ''
+        loadGame()
+    } else if (type =='playerWin'){ // the player, event, and hitInc and hitDec are removed from the screen
+        for(let i = 0; i < imgArray.length; i++){
+            clearImage(imgArray[i])
+            clearInterval(imgArray[i].intervalId)
+        }   
+        ctx.clearRect(0, 0, event1.width, event1.height)
+        clearInterval(event1.intervalId)
+        event1.resetEvent()
+        clearImage(playerImgElement)
+        userMessage2.innerText = ''
+    }
+}
+
+//used by button to reset game
+function onResetClick(){
+    reset('resetGame') 
+    //check value
+    //console.log('reset clicked')
+
+}
+
+//== Game Play Functions ==//
+
+//once incHit/decHit hits event a random incHit/decHit is added to that array location 
 function recycleRandomHitImage(array){
     clearImage(array)
     //check value
@@ -425,7 +387,6 @@ function recycleRandomHitImage(array){
             interval = getRandomInteger(minImgIntervalRate,maxImgIntervalRate)
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             drawImage(array)
-            // ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
             // console.log("recycleImage after",array)
         } else {
@@ -440,7 +401,6 @@ function recycleRandomHitImage(array){
             interval = getRandomInteger(minImgIntervalRate,maxImgIntervalRate)
             array.intervalId = setInterval(()=>{moveImage(array,array.type)},interval)
             drawImage(array)
-            //ctx.drawImage(array,array.xcord,array.ycord, array.width, array.height)
             //check value
             // console.log("recycleImage after",array)
         }
@@ -449,131 +409,70 @@ function recycleRandomHitImage(array){
 }
 
 
-//== LOAD GAME ==//
+//--player--/
 
-// loads the game
-function loadGame(){
-    gameStatus = 1
-    //create objects for fuel and astroid
-    // createBaseFuelObject()
-    // createBaseAstroidObject()
-    userMessage.innerText = `Escape the supernova`
-    userMessage.style.color = "red"
-    userMessage2.style.fontSize = 'small'
-    userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
-
-    //populate Player 1 messages
-    createPlayerMenuIncHitMessage()
-    createPlayerMenuDecHitMessage()
-
-    //==SPACESHIP==>
-
-    //create spaceship image
-    //createSpaceshipImage(spaceshipImage, spacePic,spaceshipWidth,spaceshipHeight,leftMainWidth/2,leftMainHeight-175, spaceAlt)
-    
-        //check value
-      //  console.log("checkspaceshipImageCreateValues", "src", spaceshipImage.src, "img width",spaceshipImage.width, "img height", spaceshipImage.height, "img x", spaceshipImage.xcord, "img y", spaceshipImage.ycord)
-
-    //loads spaceship image
-    createPlayerImage(playerImgElement,player1)
-    loadPlayerImage(playerImgElement)
-  
-    //== FUEL AND ASTROIDS ==//
-
-    // create fuel and astroid images
-    createRandomHitImage(10,incHitItem, decHitItem)
-
-    //populates the image locations so they know where display on screen
-    populateImgLocationsArray()
-
-    //set image location on the img array
-    setImageLocations()
-
-    // set image intervals on the image array
-    setImageIntervals()
-
-    //== SUPERNOVA ==//
-
-    startEvent()
-    
-   event1.intervalId = setInterval(moveEvent, event1.intervalRate)
-    
-
-
-}
-
-loadGame()
-
-//==SPACESHIP==/
-
-//keys to move the spaceship, clear image and redraw image when moved
-//event listener for keys only work if the game status is set to in-play
+//keys to move the player image, clear image and redraw image when moved
+//event listener for keyboard keys only work if the game status is set to in-play (value 1)
 function navigatePlayer(e){
     
     if (e.key == 'a' && gameStatus == 1){
         ctx.clearRect(playerImgElement.xcord, playerImgElement.ycord, playerImgElement.width, playerImgElement.height)
         playerImgElement.xcord -= player1.leftRightSpeed
             // check value
-            // console.log('move ss left',"xcord",spaceshipImage.xcord, "ycord",spaceshipImage.ycord,"x", spaceshipImage.x, "y", spaceshipImage.y)
+            // console.log('move player image left',"xcord",playerImgElement.xcord, "ycord",playerImgElement.ycord,"x", playerImgElement.x, "y", playerImgElement.y)
         drawImage(playerImgElement)
-        //ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord, spaceshipImage.width, spaceshipImage.height)
     }   
     if (e.key == 's' && gameStatus == 1){
         ctx.clearRect(playerImgElement.xcord, playerImgElement.ycord, playerImgElement.width, playerImgElement.height)
         playerImgElement.xcord += player1.leftRightSpeed
             //check value
-            // console.log('move ss right',"xcord",spaceshipImage.xcord,"ycord", spaceshipImage.ycord)
+            // console.log('move player image right',"xcord",playerImgElement.xcord,"ycord", playerImgElement.ycord)
         drawImage(playerImgElement)
-        // ctx.drawImage(spaceshipImage,spaceshipImage.xcord,spaceshipImage.ycord,spaceshipImage.width, spaceshipImage.height)
-    }
-
-    if (gameStatus == 0){
-        //do nothing
     }
 
 }
 
-// event listener to control the spaceship 
+// event listener to control the player image
 document.addEventListener('keydown', navigatePlayer,false)
 
-// moves spaceship based on rules for fuel / astroid collision
+// moves player image based on rules for incHit/decHit collision
+// need to remove the image from it's current location location and redraw the image in the new location
 function movePlayer(type){
-    // adding event listener here to TEST location and effect, in this location you can't move the spaceship until it's hit by an astroid or fuel
-    // document.addEventListener('keydown', navigateSpaceship,false)
 
     rememberPlayerLocX = playerImgElement.xcord
     rememberPlayerLocY = playerImgElement.ycord
     
     ctx.clearRect(rememberPlayerLocX, rememberPlayerLocY, playerImgElement.width, playerImgElement.height)
         //check value
-        //console.log('clear spaceship',"xcord",player1.xcord, "remX", rememberPlayerLocX, "ycord", player1.ycord, "remY", rememberPlayerLocY)    
-    if(type == "fuel"){
+        //console.log('clear player image',"xcord",playerImgElement.xcord, "remX", rememberPlayerLocX, "ycord", playerImgElement.ycord, "remY", rememberPlayerLocY)    
+    if(type == 'inc'){
         playerImgElement.ycord -= player1.HitIncNo
         ctx.drawImage(playerImgElement,rememberPlayerLocX,rememberPlayerLocY-player1.HitIncNo,playerImgElement.width, playerImgElement.height)
         incHitItem.counter += 1
         createPlayerMenuIncHitMessage()
             //check value  
-            //console.log("moveSpaceshipfuel","x", player1.xcord,"y",player1.ycord)
+            //console.log("move player due to inc hit","x", playerImgElement.xcord,"y",playerImgElement.ycord,"incHitno", player1.HitIncNo)
     }
-    if (type == "astroid"){
+    if (type == 'dec'){
         playerImgElement.ycord += player1.HitDecNo
         ctx.drawImage(playerImgElement,rememberPlayerLocX,rememberPlayerLocY+player1.HitDecNo,playerImgElement.width, playerImgElement.height)
         decHitItem.counter +=1
         createPlayerMenuDecHitMessage()
             //check value
-            //console.log("moveSpaceshipastroid","x", player1.xcord,"y",player1.ycord)
+            //console.log("move player due to dec hit","x", playerImgElement.xcord,"y",playerImgElement.ycord)
     }
 
 }
 
-//== COLLISIONS ==//
 
-// collision between the spaceship and the fuel/astroid
+//== COLLISION detection ==//
+
+// detects collision between the event and the incHit and decHit items
 function detectPlayerCollision(name,type){
-    //y: test1: on the same plane so you just need to check one from fuel/astroid and space ship
-    //x: test2: one corner from fuel/astroid should be between both corners from spaceship
-    //x: test3: other corner from fuel/astroid shold be between both corners from spaceship
-    //x: test4: outer corner of spaceship to inner corner of fuel/astroid (scenario where fuel/astroid is directly above spaceship)
+    //y: test1: items are on the same plane so you just need to check one from incHit/decHit and player image
+    //x: test2: one corner from incHit/decHit should be between both corners from player image
+    //x: test3: other corner from incHit/decHit should be between both corners from player image
+    //x: test4: outer corner of player image to inner corner of incHit/decHit (scenario where incHit/decHit image is directly above player image)
 
     let test1 = (playerImgElement.ycord <= name.ycord+name.width)
     let test2 = (playerImgElement.xcord >=name.xcord &&playerImgElement.xcord <= name.xcord+name.width)
@@ -589,22 +488,7 @@ function detectPlayerCollision(name,type){
 }
 
 
-//spaceship reaches top of screen
-//win condition detected
-function detectWinCollision(){
-    let test1 = playerImgElement.ycord
-    if(test1 <= 0){
-        //change user message to win
-        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
-        //remove astroid/fuel images
-        reset('playerWin')
-        
-    }
-        
-}
-
-//collision between the supernova and the fuel/astroid
-//new fuel/astroid generated
+//collision between the player and the incHit/decHit items
 function detectEventCollision(array){
     if(event1.ycord <= array.ycord+playerImgElement.height){
         recycleRandomHitImage(array)
@@ -612,17 +496,14 @@ function detectEventCollision(array){
 
 }
 
-
-//moves astroid and fuel images and detects collisions with ship or supernova
-//moves 5 spaces on an interval
-//clears and redraws the image on an interval, interval is set on the individual image and stored in the image array
+//moves incHit/decHit image & detects collisions with either player or event
+//clears and redraws the incHit/decHit image on an interval, interval is set on the individual image and stored in the image array
 function moveImage(name, type){
     ctx.clearRect(name.xcord, name.ycord, name.width, name.height)
-    name.ycord += 5
+    name.ycord += 5 // number of spaces down incHit/decHit image is moved per interval
         //check value
-        //console.log("moveImage", name,"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
+        //console.log("move incHit/decHit image", name,"xcord",name.xcord, "ycord",name.ycord,"x", name.x, "y", name.y)
     drawImage(name)
-    // ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
     detectPlayerCollision(name,type)
     detectEventCollision(name)
     detectWinCollision()
@@ -630,32 +511,85 @@ function moveImage(name, type){
 }
 
 
+//win condition detection
+//player 1 image reaches top of screen
+function detectWinCollision(){
+    let test1 = playerImgElement.ycord
+    if(test1 <= 0){
+        //change user message to win
+        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
+        //remove incHit/decHit images, player image, and event from gameboard
+        reset('playerWin')
+        
+    }
+        
+}
 
-//== SUPERNOVA ==/
-
-//initiates supernova creation
-//detects lose condition, supernova hits spaceship
-function moveEvent(){
-    startEvent()
+//lose condition detection, event hits player
+//cover the screen with the supernova, clear all other images
+//initiates event creation
+function moveEvent(name){
+    startEvent(name)
     if(playerImgElement.ycord+playerImgElement.height >= event1.ycord){
         //check condition
-        //console.log("supernova hit spaceship")
-        //cover the screen with the supernova, clear all other images
+        //console.log("supernova hit spaceship")       
         userMessage.style.color = 'magenta'
         userMessage.innerText = `You were unable to escape the supernova ${'\n'} Game over`
         reset('eventWin')
-        //ctx.fillRect(event1.xcord,0,event1.width,event1.height); //ycord of 0 makes image go to top of screen
-        //clearInterval(event1.interval)
-                
     }
- 
-
 }
+
+
+//== LOAD GAME ==//
+
+// loads the game
+function loadGame(){
+    gameStatus = 1
+
+    //load user message
+    userMessage.innerText = `Escape the supernova`
+    userMessage.style.color = 'red'
+    userMessage2.style.fontSize = 'small'
+    userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
+
+    //populate Player 1 messages on side menu
+    createPlayerMenuIncHitMessage()
+    createPlayerMenuDecHitMessage()
+
+    //==PLAYER==>
+
+    //create and load player image
+    createPlayerImage(playerImgElement,player1)
+    loadPlayerImage(playerImgElement)
+  
+    //== incHIT / decHIT ==//
+
+    // create 'incHit/decHit array'
+    createRandomHitImage(10,incHitItem, decHitItem)
+
+    //create an 'array of set locations' for the incHit/decHit images to travel along, this is the x coord on the screen based on the screen width
+    populateImgLocationsArray()
+
+    //set the incHit/decHit locations in the 'incHit/decHit array' based on the 'array of set locations'
+    setImageLocations()
+
+    // set intervals for each incHit/decHit location and store in 'incHit/decHit array'
+    setImageIntervals()
+
+    //== EVENT ==//
+
+    startEvent(event1)
+    event1.intervalId = setInterval(()=>{moveEvent(event1)}, event1.intervalRate)
+    // console.log("event interval","event", event1, "event interval id", event1.intervalId, "event interval rate", event1.intervalRate)
+    
+}
+
+loadGame()
+
 
 //==RESET BUTTON==//
 
-
-resetButton.addEventListener("click", onResetClick)
+resetButton.addEventListener('click', onResetClick)
 
 
 

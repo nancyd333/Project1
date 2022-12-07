@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
     <meta charset="utf-8" />
-    <link href="style.css" rel="stylesheet">
+    <link href="./style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
     <!-- astroid images from https://www.freeimages.com/photo/asteroid-7-1337597 -->
     <!-- sun images used for fuel from  https://photojournal.jpl.nasa.gov/catalog/PIA21212-->
@@ -15,29 +15,29 @@
 
     <body>
     <div id="gameboard" class="stars">
-        <div id = "left-top">
+        <div id = "leftTop">
             <div id ="buttonDiv">
             <button class="button" id="resetButton" type="button">Play Again</button>
             </div>
         </div>
-        <div id="middle-top" class="twinkling" >
+        <div id="middleTop" class="twinkling" >
             <div id = "middleTopDiv">
-                <p id="user-message" ></p>
-                <p id="user-message2" ></p>
+                <p id="userMessage" ></p>
+                <p id="userMessage2" ></p>
             </div>
         </div>
-        <div id ="left-aside">
-            <p id="player-one">Player 1</p>
+        <div id ="leftAside">
+            <p id="playerOne">Player 1</p>
             <p id="playerIncHitId"></p>
             <p id="playerDecHitId"></p>
         </div>
 
-        <div id = "left-main" class="twinkling">
+        <div id = "leftMain" class="twinkling">
             <canvas id="canvas" ></canvas>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
     </body>
 
 </html>
