@@ -8,20 +8,20 @@ const spaceshipImage = document.createElement('img')
 const userMessage = document.getElementById('user-message')
 const userMessage2 = document.getElementById('user-message2')
 const playerOneDiv = document.getElementById('player-one')
-const fuelMessage = document.getElementById('fuel')
-const astroidMessage = document.getElementById('astroid')
-const playerFuelImg = document.createElement('img')
-const playerFuelSpan = document.createElement('span')
-const playerAstroidImg = document.createElement('img')
-const playerAstroidSpan = document.createElement('span')
+const playerIncHitId = document.getElementById('playerIncHitId')
+const playerDecHitId = document.getElementById('playerDecHitId')
+const playerMenuIncHitImgElement = document.createElement('img')
+const playerMenuIncHitSpanElement = document.createElement('span')
+const playerMenuDecHitImgElement = document.createElement('img')
+const playerMenuDecHitSpanElement = document.createElement('span')
 const middleTopDiv = document.getElementById('middleTopDiv')
 const ctx = canvas.getContext('2d')
 let leftMainHeight = leftMain.clientHeight//offsetHeight as opposed to clientHeight
 let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
-let gradientTrackNum = 0
-let gradientIncNo = 20
-let gradientEndNo = leftMainWidth -200
-let gradientChangeValue = 0
+// let gradientTrackNum = 0
+// let gradientIncNo = 20
+// let gradientEndNo = leftMainWidth -200
+// let gradientChangeValue = 0
 let imageHeight = 30
 let imageWidth = 30
 let spaceshipHeight = 100
@@ -45,7 +45,7 @@ let minImgIntervalRate = 10 //set rate at which astroids and fuel drop from the 
 let maxImgIntervalRate = 150 //set rate at which astroids and fuel drop from the sky
 
 
-
+// class to create the event that is impeding doom on the player
 class EventItem{
     constructor(){
         this.xcord = 0;
@@ -54,6 +54,10 @@ class EventItem{
         this.height = leftMainHeight;
         this.intervalId = '';
         this.intervalRate = 200;
+        this.gradientTrackNum = 0;
+        this.gradientIncNo = 20;
+        this.gradientEndNo = leftMainWidth -200;
+        this.gradientChangeValue = 0;
     }
 
     resetEvent(){
@@ -63,14 +67,16 @@ class EventItem{
         this.height = leftMainHeight;
         this.intervalId = '';
         this.intervalRate = 200;
+        this.gradientTrackNum = 0;
+        this.gradientIncNo = 20;
+        this.gradientEndNo = leftMainWidth -200;
+        this.gradientChangeValue = 0;
     }
-
-
-
 
 }
 const event1 = new EventItem()
 
+// class to create objects that increment and decrement the player
 class HitItem{
     constructor(name,src,width, height,xcord,ycord,type,intervalId, imgLocId){
         this.name = name;
@@ -153,10 +159,10 @@ function reset(type){
         for(let i = 0; i < imgArray.length; i++){
             clearImage(imgArray[i])
             clearInterval(imgArray[i].intervalId)
-            clearImage(spaceshipImage)
-            userMessage2.innerText = ''
         }
-
+        clearImage(spaceshipImage)
+        userMessage2.innerText = ''
+        ctx.fillRect(event1.xcord,0,event1.width,event1.height)
     } else if (type=='resetGame'){
         for(let i = 0; i < imgArray.length; i++){
             clearImage(imgArray[i])
@@ -164,36 +170,32 @@ function reset(type){
             //checkvalue
             console.log('resetGame',imgArray)
         }
+        ctx.clearRect(0,0, event1.width, event1.height)
+        clearInterval(event1.intervalId)
+        event1.resetEvent()
         imgArray = []
         imgLocations =[]
         intervalList=[]
-        event1.resetEvent()
         leftMainHeight = leftMain.clientHeight
         leftMainWidth = leftMain.clientWidth
-        bodyHeight = body.clientHeight
-        bodyWidth = body.clientWidth
+        bodyHeight = body.clientHeight //is this used?
+        bodyWidth = body.clientWidth // is this used?
         incHitItem.counter = 0
-        decHitItem.counter = 0
-        clearInterval(event1.intervalId)
-        // clearImage(event1)
-        ctx.clearRect(event1.xcord,0,event1.width,event1.height);
+        decHitItem.counter = 0      
         userMessage.innerText = ''
         userMessage2.innerText = ''
         loadGame()
     } else if (type =='winGame'){
         for(let i = 0; i < imgArray.length; i++){
-            for(let i = 0; i < imgArray.length; i++){
-                clearImage(imgArray[i])
-                clearInterval(imgArray[i].intervalId)
-                clearInterval(event1.intervalId)
-                clearImage(event1)
-                // ctx.clearRect(supernovaX,0,supernovaWidth,supernovaHeight);
-                clearImage(spaceshipImage)
-                userMessage2.innerText = ''
-            }
-            
-         }
-     }
+            clearImage(imgArray[i])
+            clearInterval(imgArray[i].intervalId)
+        }   
+        ctx.clearRect(0, 0, event1.width, event1.height)
+        clearInterval(event1.intervalId)
+        event1.resetEvent()
+        clearImage(spaceshipImage)
+        userMessage2.innerText = ''
+    }
 }
 
 //used by button to reset game
@@ -232,19 +234,17 @@ function loadSpaceshipImage(name){
 //==SUPERNOVA==//
 
 //creates the supernova drawing
-function createSuperNova(){
+function startEvent(){
     event1.ycord -= 1;
     fillRect(event1)
-    // ctx.fillRect(supernovaX,supernovaY,supernovaWidth,supernovaHeight);
-    gradientSuperNovaIncrement()
+    gradientEventIncrement(event1)
         //check value
         // console.log("movesupernova: ","supernovaY",supernovaY,"spaceshipY",spaceshipImage.ycord, "supernovaX",supernovaX ,  "supernovaWidth",supernovaWidth,"supernovaHeight",supernovaHeight);
 }
 
 //set gradient for supernova
-function gradientSuperNova(num){
-    gradientChangeValue = num
-    let gradient = ctx.createLinearGradient(0,gradientChangeValue,400,0); //150,0
+function gradientEvent(name){
+    let gradient = ctx.createLinearGradient(0,name.gradientChangeValue,400,0); //150,0
     gradient.addColorStop('0', '#fee440');
     gradient.addColorStop('0.2',"orange");
     gradient.addColorStop('0.5',"red");
@@ -254,26 +254,26 @@ function gradientSuperNova(num){
 }
 
 //set gradient movement in the supernova
-function gradientSuperNovaIncrement(){
+function gradientEventIncrement(name){
       
     //-- this code moves the gradient back and forth across the screen
-    let inc = gradientIncNo
-    let max = gradientEndNo
-    if (gradientChangeValue == max){
-        gradientTrackNum = max
+    let inc = name.gradientIncNo
+    let max = name.gradientEndNo
+    if (name.gradientChangeValue == max){
+        name.gradientTrackNum = max
     }
-    if (gradientChangeValue == 0){
-        gradientTrackNum = 0
+    if (name.gradientChangeValue == 0){
+        name.gradientTrackNum = 0
     }
-    if(gradientTrackNum == max){
-        gradientChangeValue -= inc
+    if(name.gradientTrackNum == max){
+        name.gradientChangeValue -= inc
     }
-    if(gradientTrackNum == 0){
-        gradientChangeValue += inc
+    if(name.gradientTrackNum == 0){
+        name.gradientChangeValue += inc
     }
     
     // console.log("changevalue", gradientChangeValue,"num", gradientTrackNum, )
-    gradientSuperNova(gradientChangeValue)
+    gradientEvent(name)
 }
 
 //==ASTROIDS AND FUEL==//
@@ -352,27 +352,27 @@ function setImageIntervals(){
 }
 
 //create the Player 1 section for Fuel with image
-function createPlayerFuelMessage(){
-    playerFuelImg.src = incHitItem.src
-    playerFuelImg.alt = incHitItem.alt
-    playerFuelImg.width = 10
-    playerFuelImg.height = 10
-    fuelMessage.append(playerFuelImg)
-    playerFuelSpan.id = incHitItem.type + 'Span'
-    fuelMessage.append(playerFuelSpan)
-    playerFuelSpan.innerText = `${incHitItem.displayName}: ${incHitItem.counter}`
+function createPlayerMenuIncHitMessage(){
+    playerMenuIncHitImgElement.src = incHitItem.src
+    playerMenuIncHitImgElement.alt = incHitItem.alt
+    playerMenuIncHitImgElement.width = 10
+    playerMenuIncHitImgElement.height = 10
+    playerIncHitId.append(playerMenuIncHitImgElement)
+    playerMenuIncHitSpanElement.id = incHitItem.type + 'Span'
+    playerIncHitId.append(playerMenuIncHitSpanElement)
+    playerMenuIncHitSpanElement.innerText = `${incHitItem.displayName}: ${incHitItem.counter}`
 }
 
 //create the Player 1 section for Astroid with image
-function createPlayerAstroidMessage(){
-    playerAstroidImg.src = decHitItem.src
-    playerAstroidImg.alt = decHitItem.alt
-    playerAstroidImg.width = 15
-    playerAstroidImg.height = 15
-    astroidMessage.append(playerAstroidImg)
-    playerAstroidSpan.id = decHitItem.type + 'Span'
-    astroidMessage.append(playerAstroidSpan)
-    playerAstroidSpan.innerText = `${decHitItem.displayName}: ${decHitItem.counter}`
+function createPlayerMenuDecHitMessage(){
+    playerMenuDecHitImgElement.src = decHitItem.src
+    playerMenuDecHitImgElement.alt = decHitItem.alt
+    playerMenuDecHitImgElement.width = 15
+    playerMenuDecHitImgElement.height = 15
+    playerDecHitId.append(playerMenuDecHitImgElement)
+    playerMenuDecHitSpanElement.id = decHitItem.type + 'Span'
+    playerDecHitId.append(playerMenuDecHitSpanElement)
+    playerMenuDecHitSpanElement.innerText = `${decHitItem.displayName}: ${decHitItem.counter}`
 }
 
 //creates a astroid or fuel image, chosen at random
@@ -444,8 +444,8 @@ function loadGame(){
     userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
 
     //populate Player 1 messages
-    createPlayerFuelMessage()
-    createPlayerAstroidMessage()
+    createPlayerMenuIncHitMessage()
+    createPlayerMenuDecHitMessage()
 
     //==SPACESHIP==>
 
@@ -475,9 +475,9 @@ function loadGame(){
 
     //== SUPERNOVA ==//
 
-    createSuperNova()
+    startEvent()
     
-   event1.intervalId = setInterval(moveSuperNova, event1.intervalRate)
+   event1.intervalId = setInterval(moveEvent, event1.intervalRate)
     
 
 
@@ -531,16 +531,16 @@ function moveSpaceship(type){
     if(type == "fuel"){
         spaceshipImage.ycord -= spaceshipHitMoveUpNo
         ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY-spaceshipHitMoveUpNo,spaceshipImage.width, spaceshipImage.height)
-        incHitItem.counter++
-        createPlayerFuelMessage()
+        incHitItem.counter += 1
+        createPlayerMenuIncHitMessage()
             //check value  
             console.log("moveSpaceshipfuel","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
     if (type == "astroid"){
         spaceshipImage.ycord += spaceshipHitMoveDownNo
         ctx.drawImage(spaceshipImage,rememberSpaceShipLocX,rememberSpaceShipLocY+spaceshipHitMoveDownNo,spaceshipImage.width, spaceshipImage.height)
-        decHitItem.counter++
-        createPlayerAstroidMessage()
+        decHitItem.counter +=1
+        createPlayerMenuDecHitMessage()
             //check value
             console.log("moveSpaceshipastroid","x", spaceshipImage.xcord,"y",spaceshipImage.ycord)
     }
@@ -578,8 +578,6 @@ function detectShipWinCollision(){
         //change user message to win
         userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
         //remove astroid/fuel images
-        clearInterval(event1.intervalId)
-        // clearInterval(moveSpaceship)
         reset('winGame')
         
     }
@@ -588,7 +586,7 @@ function detectShipWinCollision(){
 
 //collision between the supernova and the fuel/astroid
 //new fuel/astroid generated
-function detectSuperNovaCollision(array){
+function detectEventCollision(array){
     if(event1.ycord <= array.ycord+spaceshipHeight){
         recycleRandomImage(array)
     }
@@ -607,7 +605,7 @@ function moveImage(name, type){
     drawImage(name)
     // ctx.drawImage(name,name.xcord,name.ycord, name.width, name.height)
     detectShipCollision(name,type)
-    detectSuperNovaCollision(name)
+    detectEventCollision(name)
     detectShipWinCollision()
 
 }
@@ -618,8 +616,8 @@ function moveImage(name, type){
 
 //initiates supernova creation
 //detects lose condition, supernova hits spaceship
-function moveSuperNova(){
-    createSuperNova()
+function moveEvent(){
+    startEvent()
     if(spaceshipImage.ycord+spaceshipHeight >= event1.ycord){
         //check condition
         console.log("supernova hit spaceship")
@@ -627,7 +625,7 @@ function moveSuperNova(){
         userMessage.style.color = 'magenta'
         userMessage.innerText = `You were unable to escape the supernova ${'\n'} Game over`
         reset('supernovaEvent')
-        ctx.fillRect(event1.xcord,0,event1.width,event1.height); //ycord of 0 makes image go to top of screen
+        //ctx.fillRect(event1.xcord,0,event1.width,event1.height); //ycord of 0 makes image go to top of screen
         //clearInterval(event1.interval)
                 
     }
