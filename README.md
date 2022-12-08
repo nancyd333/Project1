@@ -71,7 +71,7 @@ Win by escaping distruction!
 ## Approach Taken
 ---
 - Set daily goals for completion
-- Began with completing MVP
+- Completed MVP
     -  Divided project into sections
     -  Started with getting one item to work, then expanded it out to get multiples
         - One example of this approach was getting:
@@ -80,13 +80,14 @@ Win by escaping distruction!
             3. astroids and fuel to fall
             4. astroids and fuel to be randomly chosen to fall
             5. astroids and fuel to fall at different rates
-- Worked on styling and game flow
+- Iterated on styling and game flow
 </br>
 </br>
 
 ## Post Project Reflection
 ---
-- Use naming that is descriptive of the action but general of the actor, to allow them to be used for multiple purposes
-- Create functions that do limited actions, so they can be reused
+As I refactored code to make it more succinct, and iterated on development ideas, it became clear the variable and function names were not generalized, which limited it's flexiblity. This made it helpful to conceptualize initially, but needed to be changed in the end. Lessons learned:
+- Use variable and function names that are descriptive of the action but general enough to allow for flexibility
+- Create functions that have specific responsibly, so they can be reused
 </br>
 </br>
