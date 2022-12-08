@@ -13,13 +13,12 @@ Win by escaping distruction!
 </br>
 
 ## Mockup
----
+
 ![mockup for game](mockup2.png)
 </br>
 </br>
 
 ## Tech Being Used
-
 
 - HTML
 - CSS
@@ -28,7 +27,7 @@ Win by escaping distruction!
 </br>
 
 ## Sources Used
----
+
 - astroid images: https://www.freeimages.com/photo/asteroid-7-1337597
 - sun image used for fuel: https://photojournal.jpl.nasa.gov/catalog/PIA21212
 - spaceship image: https://freepngimg.com/png/24752-spaceship
@@ -37,7 +36,7 @@ Win by escaping distruction!
 </br>
 
 ## MVP Checklist
----
+
 - Basic gameboard layout<br>
 - Section for Player<br>
 - Section for displaying win/lose status<br>
@@ -49,7 +48,7 @@ Win by escaping distruction!
 </br>
 
 ## Stretch Goals
----
+
 - Make a landing page with instructions 
     - backstory and instructions may display as an opening crawl
 - Refine graphics
@@ -63,14 +62,14 @@ Win by escaping distruction!
 </br>
 
 ## Potential Roadblocks
----
+
 - Getting all the pieces to work together as expected
 - Testing different scenarios
 </br>
 </br>
 
 ## Approach Taken
----
+
 - Set daily goals for completion
 - Completed MVP
     -  Divided project into sections
