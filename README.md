@@ -20,6 +20,7 @@ Win by escaping distruction!
 
 ## Tech Being Used
 ---
+
 - HTML
 - CSS
 - JavaScript (including canvas)
