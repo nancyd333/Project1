@@ -10,13 +10,13 @@ Win by escaping distruction!
 
 [Play online](https://nancyd333.github.io/Project1/)
 </br>
-</br>
+
 
 ## Mockup
 
 ![mockup for game](mockup2.png)
 </br>
-</br>
+
 
 ## Tech Being Used
 
@@ -24,7 +24,7 @@ Win by escaping distruction!
 - CSS
 - JavaScript (including canvas)
 </br>
-</br>
+
 
 ## Sources Used
 
@@ -33,7 +33,7 @@ Win by escaping distruction!
 - spaceship image: https://freepngimg.com/png/24752-spaceship
 - twinkling sky: https://github.com/Carla-Codes/starry-night-css-animation/blob/master/index.html 
 </br>
-</br>
+
 
 ## MVP Checklist
 
@@ -45,7 +45,7 @@ Win by escaping distruction!
 - Detection and subsequent action when collision between spaceship and objects occur<br>
 - Ability to reset the game
 </br>
-</br>
+
 
 ## Stretch Goals
 
@@ -59,14 +59,14 @@ Win by escaping distruction!
 - Implement additional tokens (identified as 'TBD token' in mockup)
 - Allow user to choose a game theme and difficulty level
 </br>
-</br>
+
 
 ## Potential Roadblocks
 
 - Getting all the pieces to work together as expected
 - Testing different scenarios
 </br>
-</br>
+
 
 ## Approach Taken
 
@@ -82,10 +82,10 @@ Win by escaping distruction!
             5. astroids and fuel to fall at different rates
 - Iterated on styling and game flow
 </br>
-</br>
+
 
 ## Post Project Reflection
----
+
 As I refactored code to make it more succinct, and iterated on development ideas, it became clear the variable and function names were not generalized, which limited it's flexiblity. This made it helpful to conceptualize initially, but needed to be changed in the end. Lessons learned:
 - Use variable and function names that are descriptive of the action but general enough to allow for flexibility
 - Create functions that have specific responsibly, so they can be reused
