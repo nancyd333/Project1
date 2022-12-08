@@ -21,7 +21,6 @@ let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
 let gameStatus = 0 // gameStatus 1 is in-play ; and 0 is not in-play
 let imgArray = []
 let imgLocations = []
-let intervalList = []
 
 
 let minImgIntervalRate = 10 //min rate incHit/decHit image falls from the sky, min number for random setting
@@ -338,7 +337,6 @@ function reset(type){
         event1.resetEvent()
         imgArray = []
         imgLocations =[]
-        intervalList=[]
         leftMainHeight = leftMain.clientHeight
         leftMainWidth = leftMain.clientWidth
         incHitItem.counter = 0
