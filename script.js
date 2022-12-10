@@ -16,8 +16,8 @@ const playerMenuDecHitImgElement = document.createElement('img')
 const playerMenuDecHitSpanElement = document.createElement('span')
 const middleTopDiv = document.getElementById('middleTopDiv')
 const ctx = canvas.getContext('2d')
-let leftMainHeight = leftMain.clientHeight//offsetHeight as opposed to clientHeight
-let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
+let leftMainHeight = leftMain.clientHeight
+let leftMainWidth = leftMain.clientWidth
 let gameStatus = 0 // gameStatus 1 is in-play ; and 0 is not in-play
 let imgArray = []
 let imgLocations = []
@@ -143,6 +143,11 @@ class Player{
         this.HitIncNo = 50;
         this.HitDecNo = 10;
     }
+
+    resetEvent(){
+        this.xcord = leftMainWidth/2;
+        this.ycord = leftMainHeight-175;
+    }
 }
 
 //create all the players per game theme
@@ -185,10 +190,15 @@ function loadPlayerImage(name){
     }
 }
 
+
+function setGameboardSize(){
+leftMainHeight = leftMain.clientHeight
+leftMainWidth = leftMain.clientWidth
 //set canvas to the height / width of the div that contains it
 //canvas size is set once and keeps it at that size
 canvas.setAttribute('height',leftMainHeight)
 canvas.setAttribute('width',leftMainWidth)
+}
 
 
 function setUserMessage(type = 'other'){
@@ -382,7 +392,6 @@ function createRandomHitImage(hitItem1, hitItem2){
 //==RESET parts of screen based on the type of event==//
 
 function reset(type){
-    
     gameStatus = 0 // changes the game status to be NOT in-play
     clearImage(playerImgElement)
 
@@ -402,13 +411,13 @@ function reset(type){
         }
         ctx.clearRect(0,0, event1.width, event1.height)
         clearInterval(event1.intervalId)
+        setGameboardSize()
         event1.resetEvent()
         imgArray = []
         imgLocations =[]
-        leftMainHeight = leftMain.clientHeight
-        leftMainWidth = leftMain.clientWidth
         incHitItem.counter = 0
-        decHitItem.counter = 0      
+        decHitItem.counter = 0  
+        player1.resetEvent()    
         loadGame()
     } else if (type =='playerWin'){ // the player, event, and hitInc and hitDec are removed from the screen
         for(let i = 0; i < imgArray.length; i++){
@@ -609,6 +618,7 @@ function moveEvent(name){
 // loads the game
 function loadGame(){
     gameStatus = 1 //sets game status to 'in-play' 
+    setGameboardSize()
     setGameTheme() //set the game theme to player,event,inc/decHitItems
     //load user message
     setUserMessage()
