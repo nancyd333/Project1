@@ -14,7 +14,7 @@ Win by escaping distruction!
 
 ## Mockup
 
-![mockup for game](mockup2.png)
+![mockup for game](./img/mockup2.png)
 </br>
 
 

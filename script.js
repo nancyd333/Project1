@@ -21,7 +21,12 @@ let leftMainWidth = leftMain.clientWidth//offsetWidth as opposed to clientWidth
 let gameStatus = 0 // gameStatus 1 is in-play ; and 0 is not in-play
 let imgArray = []
 let imgLocations = []
-
+let incDecHitImgWidth = 30; //game is set to work with set width
+let incDecHitImgHeight = 30; //game is set to work with set height
+let numImgsRatio = 3; // increasing this number creates more space between inc/decHit images on gameboard (and decreases the number of inc/decHit images). Use number between 1 (gameboard maximum crowding with images) and  5(min crowding). Do not set to 0.
+let gameTheme = 1 //set the game theme
+let sideImgWidth = 10 //default setting for the hit image on the left side menu
+let sideImgHeight = 10 //default setting for the hit image on the left side menu
 
 let minImgIntervalRate = 10 //min rate incHit/decHit image falls from the sky, min number for random setting
 let maxImgIntervalRate = 150 //max rate incHit/decHit image falls from the sky, min number for random setting
@@ -85,29 +90,42 @@ class EventItem{
     }
 
 }
-const event1 = new EventItem()
+
+//create all the events per game theme
+const eventTheme1 = new EventItem()
+
+//set the event to the selected game theme
+let event1 = ''//eventTheme1
 
 // class to create objects that increment and decrement the player
 class HitItem{
-    constructor(name,src,width, height,xcord,ycord,type){
+    constructor(name,src,width, height,type,sideImgWidth, sideImgHeight){
         this.name = name; // descriptive name for the incHit / decHit item, this will appear on screen
         this.src = src;
         this.width = width;
         this.height = height;
-        this.xcord = xcord;
-        this.ycord = ycord;
+        this.xcord = 0;
+        this.ycord = 0;
         this.type = type.toLowerCase(); // must be set to either 'inc' or 'dec' used in setImageIntervals and effects all other gameplay
         this.displayName = name.charAt(0).toUpperCase() + name.slice(1) ;
         this.alt = name.toLowerCase();
         this.intervalId = '';
         this.imgLocId = '';
         this.counter = 0;
+        this.sidePlayerImgWidth = sideImgWidth;
+        this.sidePlayerImgHeight = sideImgHeight;
     }
 
 }
 
-const incHitItem = new HitItem('fuel', 'sun.jpeg', 30, 30, 0,0, 'inc')
-const decHitItem = new HitItem('astroid', 'astroid1.jpg', 30, 30, 0,0, 'dec')
+//create all the inc/decHitItems per game theme
+const incHitItemTheme1 = new HitItem('fuel', './img/sun.jpeg', incDecHitImgWidth, incDecHitImgHeight, 'inc',sideImgWidth,sideImgHeight)
+const decHitItemTheme1 = new HitItem('astroid', './img/astroid1.jpg', incDecHitImgWidth, incDecHitImgHeight, 'dec',sideImgWidth+5,sideImgHeight+5)
+
+//set the inc/decHitItems to the selected game theme
+let incHitItem = ''//incHitItemTheme1
+let decHitItem = ''//decHitItemTheme1
+
 
 // class to create player
 class Player{
@@ -127,27 +145,37 @@ class Player{
     }
 }
 
-const player1 = new Player('spaceship', 'spaceship', '24752-5-spaceship.png')
+//create all the players per game theme
+const playerTheme1 = new Player('spaceship', 'spaceship', './img/24752-5-spaceship.png')
 
-// creates the player IMG 
-function createPlayerImage(name, player)  {
-    name.src= player.src
-    name.width = player.width
-    name.height = player.height
-    name.xcord = player.xcord
-    name.ycord = player.ycord
-    name.alt = player.alt
+//set the player to the selected game theme
+let player1 = ''//playerTheme1
+
+
+// sets the IMG values for gameplay
+// name is the global IMG variable name
+// objectname is the name of the object that has the values set, for example: player1
+function setImageValuesFromObjects(name, objectname)  {
+    name.src= objectname.src
+    name.width = objectname.width
+    name.height = objectname.height
+    name.xcord = objectname.xcord
+    name.ycord = objectname.ycord
+    name.alt = objectname.alt
 }
 
+// sets the IMG values for gameplay
+// use when you need to assign values individually
+function setImageValues(name, src, width, height, xcord, ycord, alt)  {
+    name.src= src
+    name.width = width
+    name.height = height
+    name.xcord = xcord
+    name.ycord = ycord
+    name.alt = alt
+}
 
-//set canvas to the height / width of the div that contains it
-//canvas size is set once and keeps it at that size
-canvas.setAttribute('height',leftMainHeight)
-canvas.setAttribute('width',leftMainWidth)
-
-
-
-//load player image
+//load player image for gameplay, gets value from player set for the game
 function loadPlayerImage(name){
     //generate image on page
     name.onload = function(){
@@ -157,10 +185,55 @@ function loadPlayerImage(name){
     }
 }
 
+//set canvas to the height / width of the div that contains it
+//canvas size is set once and keeps it at that size
+canvas.setAttribute('height',leftMainHeight)
+canvas.setAttribute('width',leftMainWidth)
+
+
+function setUserMessage(type = 'other'){
+    if(type == 'other'){
+        userMessage.innerText = `Escape the supernova`
+        userMessage.style.color = 'red'
+        userMessage2.style.fontSize = 'small'
+        userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
+    } else if (type == 'playerWin'){
+        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
+        userMessage2.innerText = ''
+    } else if (type == 'eventWin'){
+        userMessage.style.color = 'magenta'
+        userMessage.innerText = `You were unable to escape. ${'\n'} Game over`
+        userMessage2.innerHTML = ''
+    } else if (type == 'resetGame'){
+        userMessage.innerHTML = ''
+        userMessage2.innerHTML = ''
+    }
+
+}
+
+function setGameTheme(){
+    if(gameTheme == 1){
+        player1 = playerTheme1
+        incHitItem = incHitItemTheme1
+        decHitItem = decHitItemTheme1
+        event1 = eventTheme1
+    } else if(gameTheme == 2){
+        //add code here
+    } else if(gameTheme == 3){
+        //add code here
+    } else if(gameTheme == 4){
+        //add code here
+    } else {
+        console.log('Need to set game theme')
+    }
+
+}
+
+
 
 //--event--//
 
-//creates the event drawing
+//creates the event rectangle drawing
 function startEvent(name){
     name.ycord = name.ycord - 1;
     // console.log("start event", "event", name, "ycord",name.ycord)
@@ -205,6 +278,24 @@ function gradientEventIncrement(name){
 
 //--incHit and decHit--//
 
+//determine the number of inc/decHit images for the gameboard, based on screen width and width of inc/decHit img
+function getNumberOfHitImgLocs(){
+    let num = Math.ceil(leftMainWidth/ (incDecHitImgWidth/numImgsRatio));
+    return num;
+     
+}
+
+//determine the x coord location of the incHit / decHit images and save to locations array
+function populateImgLocationsArray(){
+    let counter = 30 // creates spacing on gameboard for the first image, 30 seems to be a good distance. If set to 0, the first image will be flush with left side of gameboard and looks crowded.
+    for(let i=0; i < getNumberOfHitImgLocs(); i++ ){
+        imgLocations[i] = counter
+        counter += getNumberOfHitImgLocs()
+            //check value
+            // console.log("populateImgLocationsArray","counter",counter,"imgLocations", imgLocations,"getNumberOfHitImgLocs", getNumberOfHitImgLocs())
+    }
+    
+}
 
 //array created to track incHit and decHit images
 function createImageArray(name, src, width, height, xcord, ycord,alt, type){
@@ -225,7 +316,7 @@ function createImageArray(name, src, width, height, xcord, ycord,alt, type){
         imgArray[i].alt = alt
         imgArray[i].type = type
         imgArray[i].intervalId = ''
-        imgArray[i].imgLocId = '' //this is the screen x coordinate, which essentially set the column the image will fall dowm from on the screen for that game 
+        imgArray[i].imgLocId = '' //this is the screen x coordinate, which essentially sets the column the image will fall dowm from on, the screen for that game 
         imgArray[i].num = i
 
         //check value
@@ -235,28 +326,13 @@ function createImageArray(name, src, width, height, xcord, ycord,alt, type){
 
 }
 
-//get the positions for the current browser screen and use to determine the location of the incHit / decHit images
-//need all images added to array before this can be calcualted
-function populateImgLocationsArray(){
-    let counter = 0
-    imgLoc = Math.floor(leftMainWidth * .90 / imgArray.length)   
-        //check value
-        //console.log("imgLoc",imgLoc, imgArray.length)
-
-    for(let i=0; i < imgArray.length; i++ ){
-        counter += imgLoc
-        imgLocations[i] = counter
-            //check value
-            // console.log("setcoords",counter, imgLocations)
-    }
-    
-}
-
-//set image location in incHit/decHit array from the randomly generated location array
+//set image location in incHit/decHit array
 function setImageLocations(){
-    for(let i = 0; i < imgArray.length; i++){
+    for(let i = 0; i < getNumberOfHitImgLocs(); i++){
         imgArray[i].xcord = imgLocations[i]
         imgArray[i].imgLocId = imgLocations[i]
+        //check value
+        // console.log("setImageLocations", "Imgxcord",imgArray[i].xcord,"ImglocId",imgArray[i].imgLocId ,"imgLoc",imgLocations[i])
     }
 
 }
@@ -275,10 +351,7 @@ function setImageIntervals(){
 
 //create the incHit image, name, counter where Player 1 section is located
 function createPlayerMenuIncHitMessage(){
-    playerMenuIncHitImgElement.src = incHitItem.src
-    playerMenuIncHitImgElement.alt = incHitItem.alt
-    playerMenuIncHitImgElement.width = 10
-    playerMenuIncHitImgElement.height = 10
+    setImageValues(playerMenuIncHitImgElement, incHitItem.src,incHitItem.sidePlayerImgWidth,incHitItem.sidePlayerImgHeight,'','',incHitItem.alt)  //image variable name, src, width, height, xcord, ycord, alt
     playerIncHitId.append(playerMenuIncHitImgElement)
     playerMenuIncHitSpanElement.id = incHitItem.type + 'Span'
     playerIncHitId.append(playerMenuIncHitSpanElement)
@@ -287,10 +360,7 @@ function createPlayerMenuIncHitMessage(){
 
 //create the decHit image, name, counter where Player 1 section is located
 function createPlayerMenuDecHitMessage(){
-    playerMenuDecHitImgElement.src = decHitItem.src
-    playerMenuDecHitImgElement.alt = decHitItem.alt
-    playerMenuDecHitImgElement.width = 15
-    playerMenuDecHitImgElement.height = 15
+    setImageValues(playerMenuDecHitImgElement, decHitItem.src,decHitItem.sidePlayerImgWidth,decHitItem.sidePlayerImgHeight,'','',decHitItem.alt)  //img variable name, src, width, height, xcord, ycord, alt
     playerDecHitId.append(playerMenuDecHitImgElement)
     playerMenuDecHitSpanElement.id = decHitItem.type + 'Span'
     playerDecHitId.append(playerMenuDecHitSpanElement)
@@ -298,10 +368,9 @@ function createPlayerMenuDecHitMessage(){
 }
 
 //creates a incHit or decHit image, chosen at random
-//num is the number of total images you want to create
 //assumes load game function has run and the locations have been set on the incHit/decHit array, this function will swap out the images randomly in the array which causes an image to appear in the set location at random
-function createRandomHitImage(num, hitItem1, hitItem2){
-    for(let i=0; i < num; i++){
+function createRandomHitImage(hitItem1, hitItem2){
+    for(let i=0; i < getNumberOfHitImgLocs(); i++){
         if(getRandomInteger(0,1)==1){
             createImageArray(hitItem1.name,hitItem1.src,hitItem1.width,hitItem1.height,hitItem1.xcord,hitItem1.ycord,hitItem1.alt,hitItem1.type)
         } else {
@@ -323,7 +392,6 @@ function reset(type){
             clearInterval(imgArray[i].intervalId)
         }
         clearImage(playerImgElement)
-        userMessage2.innerText = ''
         ctx.fillRect(event1.xcord,0,event1.width,event1.height) //this makes the event cover the screen
     } else if (type=='resetGame'){ // screen will return to start stettings
         for(let i = 0; i < imgArray.length; i++){
@@ -341,8 +409,6 @@ function reset(type){
         leftMainWidth = leftMain.clientWidth
         incHitItem.counter = 0
         decHitItem.counter = 0      
-        userMessage.innerText = ''
-        userMessage2.innerText = ''
         loadGame()
     } else if (type =='playerWin'){ // the player, event, and hitInc and hitDec are removed from the screen
         for(let i = 0; i < imgArray.length; i++){
@@ -353,12 +419,12 @@ function reset(type){
         clearInterval(event1.intervalId)
         event1.resetEvent()
         clearImage(playerImgElement)
-        userMessage2.innerText = ''
     }
 }
 
 //used by button to reset game
 function onResetClick(){
+    setUserMessage('resetGame')
     reset('resetGame') 
     //check value
     //console.log('reset clicked')
@@ -515,13 +581,14 @@ function detectWinCollision(){
     let test1 = playerImgElement.ycord
     if(test1 <= 0){
         //change user message to win
-        userMessage.innerText = `You were able to escape! ${'\n'}Congratulations!`;
+        setUserMessage('playerWin')
         //remove incHit/decHit images, player image, and event from gameboard
         reset('playerWin')
         
     }
         
 }
+
 
 //lose condition detection, event hits player
 //cover the screen with the supernova, clear all other images
@@ -530,9 +597,8 @@ function moveEvent(name){
     startEvent(name)
     if(playerImgElement.ycord+playerImgElement.height >= event1.ycord){
         //check condition
-        //console.log("supernova hit spaceship")       
-        userMessage.style.color = 'magenta'
-        userMessage.innerText = `You were unable to escape the supernova ${'\n'} Game over`
+        //console.log("event hit player")       
+        setUserMessage('eventWin')
         reset('eventWin')
     }
 }
@@ -542,13 +608,10 @@ function moveEvent(name){
 
 // loads the game
 function loadGame(){
-    gameStatus = 1
-
+    gameStatus = 1 //sets game status to 'in-play' 
+    setGameTheme() //set the game theme to player,event,inc/decHitItems
     //load user message
-    userMessage.innerText = `Escape the supernova`
-    userMessage.style.color = 'red'
-    userMessage2.style.fontSize = 'small'
-    userMessage2.innerText = `Your spaceship is caught near a supernova and is running out of fuel.${'\n'}Collect fuel to move forward and escape before the supernova expands and consumes you.${'\n'}Watch out, the astroids knock you backwards!${'\n'}Press 'a' to move left and 's' to move right.`
+    setUserMessage()
 
     //populate Player 1 messages on side menu
     createPlayerMenuIncHitMessage()
@@ -557,13 +620,14 @@ function loadGame(){
     //==PLAYER==>
 
     //create and load player image
-    createPlayerImage(playerImgElement,player1)
-    loadPlayerImage(playerImgElement)
+    //playerImgElement is set globally and passed here to set the player IMG values for the selected theme
+    setImageValuesFromObjects(playerImgElement,player1) 
+    loadPlayerImage(playerImgElement) 
   
     //== incHIT / decHIT ==//
 
     // create 'incHit/decHit array'
-    createRandomHitImage(10,incHitItem, decHitItem)
+    createRandomHitImage(incHitItem, decHitItem)
 
     //create an 'array of set locations' for the incHit/decHit images to travel along, this is the x coord on the screen based on the screen width
     populateImgLocationsArray()

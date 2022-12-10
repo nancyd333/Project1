@@ -139,12 +139,12 @@ padding-left: 1%;
 
 
 .stars {
-  background: black url(./stars.png) repeat top center ;
+  background: black url(./img/stars.png) repeat top center ;
   z-index:0;
 }
 
 .twinkling{
-  background: transparent url(./twinkling.png) repeat top center ;
+  background: transparent url(./img/twinkling.png) repeat top center ;
   z-index:1;
   animation:move-twink-back 150s linear infinite;
 }
